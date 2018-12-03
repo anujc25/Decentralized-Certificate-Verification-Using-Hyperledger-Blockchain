@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import crypto from 'crypto';
+import * as API from './../services/invokeTransaction';
 
 class Main extends Component{
     state = {
@@ -10,8 +11,9 @@ class Main extends Component{
     constructor() {
         super();
         this.state = {
-          selectedFile: '',
-          hashResult: ''
+            selectedFile: '',
+            hashResult: '',
+            result: ''
         };
     }
 
@@ -40,6 +42,27 @@ class Main extends Component{
                 var generated_hash = sha256Hash.digest('hex');
                 console.log( 'Generated Hash for file : ' +generated_hash);
                 this.setState({ hashResult: generated_hash }); 
+
+                var payload = {
+                    username: "user1",
+                    hash: generated_hash,
+                    issuer: "SJSU",
+                    action: "addCertificate"
+                }
+
+                API.invokeTransaction(payload)
+                    .then((status) => {
+                        if (status === 201) {
+                            this.setState({
+                                result: "Certificate successfully uploaded",
+                            });
+                            // this.props.history.push("/");
+                        } else {
+                            this.setState({
+                                result: "Certificate upload Falied",
+                            });
+                        }
+                    });
             }.bind(this); 
         }.bind(this))();
         
@@ -67,6 +90,9 @@ class Main extends Component{
                     </div>
                     <div className="form-group">
                         {this.state.hashResult}
+                    </div>
+                    <div className="form-group">
+                        {this.state.result} 
                     </div>
                 </form>
             </div>
