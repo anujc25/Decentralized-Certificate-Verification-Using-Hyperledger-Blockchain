@@ -44,7 +44,7 @@ class Main extends Component{
                 this.setState({ hashResult: generated_hash }); 
 
                 var payload = {
-                    username: "user1",
+                    username: "user2",
                     hash: generated_hash,
                     issuer: "SJSU",
                     action: "addCertificate"
@@ -52,7 +52,7 @@ class Main extends Component{
 
                 API.invokeTransaction(payload)
                     .then((status) => {
-                        if (status === 201) {
+                        if (status === 200) {
                             this.setState({
                                 result: "Certificate successfully uploaded",
                             });

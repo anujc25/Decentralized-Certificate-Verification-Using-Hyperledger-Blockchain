@@ -25,7 +25,7 @@ var os = require('os');
 router.post('/', function (req, res, next) {
 
 	var userName = req.body.username;
-	var timestamp = new Date();
+	var timestamp = (new Date()).toString();
 	var certificateHash = req.body.hash;
 	var issuer = req.body.issuer;
 	var action = req.body.action;
@@ -99,6 +99,8 @@ router.post('/', function (req, res, next) {
 		// send the transaction proposal to the peers
 		return channel.sendTransactionProposal(request);
 	}).then((results) => {
+		console.log("results:");
+		console.log(results);
 		var proposalResponses = results[0];
 		var proposal = results[1];
 		let isProposalGood = false;
@@ -106,10 +108,12 @@ router.post('/', function (req, res, next) {
 			proposalResponses[0].response.status === 200) {
 			isProposalGood = true;
 			console.log('Transaction proposal was good');
+			responseStatus = proposalResponses[0].response.status
 		} else {
 			console.error('Transaction proposal was bad');
+			responseStatus = 500
 		}
-		responseStatus = proposalResponses[0].response.status
+		
 		if (isProposalGood) {
 			console.log(util.format(
 				'Successfully sent Proposal and received ProposalResponse: Status - %s, message - "%s"',
@@ -190,21 +194,20 @@ router.post('/', function (req, res, next) {
 		}
 
 		if (results && results[1] && results[1].event_status === 'VALID') {
-			console.log('Successfully committed the change to the ledger by the peer');
+			console.log('Successfully committed the change to the ledger by the peer');		
+			responseStatus = 200;		
 		} else {
+			responseStatus = 400;
 			console.log('Transaction failed to be committed to the ledger due to ::' + results[1].event_status);
 		}
+		res.status(responseStatus).json({
+			message: "Transaction Invoke response"
+		});
 	}).catch((err) => {
 		console.error('Failed to invoke successfully :: ' + err);
-	});
-
-
-
-
-
-
-	res.status(responseStatus).json({
-		message: "Transaction Invoke response"
+		// res.status(responseStatus).json({
+		// 	message: "Transaction Invoke response"
+		// });
 	});
 });
 

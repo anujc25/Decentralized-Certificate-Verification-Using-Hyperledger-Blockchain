@@ -19,12 +19,12 @@ var os = require('os');
 router.get('/:hash', function (req, res, next) {
 
 	var certificateHash = req.params.hash;
-	var userName = req.body.username;
+	var userName = "user2";
 	console.log("Query transaction with params : ");
 	console.log(certificateHash);
 	console.log(userName);
 	var responseStatus = 200;
-
+	var query_result;
 
 
 
@@ -87,24 +87,28 @@ router.get('/:hash', function (req, res, next) {
 			} else {
 				responseStatus = 200;
 				console.log("Response is ", query_responses[0].toString());
+				query_result = query_responses[0].toString();
+
+				res.status(responseStatus).json({				
+					message: query_result
+				});
+
 			}
 		} else {
 			responseStatus = 204;
 			console.log("No payloads were returned from query");
+			res.status(responseStatus).json({				
+				message: query_result
+			});
 		}
 	}).catch((err) => {
 		responseStatus = 400
 		console.error('Failed to query successfully :: ' + err);
+		res.status(responseStatus).json({				
+			message: query_result
+		});
 	});
 
-
-
-
-
-
-	res.status(responseStatus).json({
-		message: "Transaction Query response"
-	});
 });
 
 module.exports = router;

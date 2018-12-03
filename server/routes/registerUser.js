@@ -86,7 +86,7 @@ router.post('/:username', function (req, res, next) {
         console.log('Successfully enrolled member user ' + userName);
         return fabric_client.createUser({
             username: userName,
-            mspid: 'Org1MSP',
+            mspid: 'SJSUMSP',
             cryptoContent: {
                 privateKeyPEM: enrollment.key.toBytes(),
                 signedCertPEM: enrollment.certificate
