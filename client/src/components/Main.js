@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import crypto from 'crypto';
-import TestFunc from '../services/invoke.js'
 
 class Main extends Component{
     state = {
@@ -29,7 +28,6 @@ class Main extends Component{
     onSubmit = (e) => {
         e.preventDefault();
         const selectedFile = this.state.selectedFile;
-        TestFunc()
         var reader = new FileReader();
 
         reader.onload = (function() { 
