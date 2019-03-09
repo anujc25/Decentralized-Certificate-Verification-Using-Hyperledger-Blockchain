@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
 )
@@ -48,6 +49,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.addCertificate(APIstub, args)
 	} else if function == "updateCertificate" {
 		return s.updateCertificate(APIstub, args)
+	} else if function == "fetchUserRole" {
+		return s.fetchUserRole(APIstub)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
@@ -98,6 +101,16 @@ func (s *SmartContract) addCertificate(APIstub shim.ChaincodeStubInterface, args
 
 func (s *SmartContract) updateCertificate(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	return shim.Success(nil)
+}
+
+func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Response {
+	value, found, err := cid.GetAttributeValue(APIstub, "role")
+	if err != nil {
+		errResponse = "{\"error\": " + err.Error() + "\"}"
+		return shim.Error(errResponse)
+	}
+	response := "{\"role\": " + value + "\"}"
+	return shim.Success(response)
 }
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
