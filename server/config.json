@@ -7,5 +7,5 @@
     "userName": "ac.student.1",
     "gatewayDiscovery": { "enabled": true, "asLocalhost": false },
     "chaincodeName" : "vericert",
-    "channelName" : "channel1"
+    "channelName" : "channel2"
 }

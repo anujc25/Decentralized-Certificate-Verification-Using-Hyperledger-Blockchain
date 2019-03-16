@@ -4,6 +4,7 @@ const FabricCAServices = require('fabric-ca-client')
 const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network')
 const fs = require('fs')
 const path = require('path')
+// const network = require('./fabric/network.js')
 
 // capture network variables from config.json
 const configPath = path.join(process.cwd(), '/config.json')
@@ -42,9 +43,9 @@ exports.loginUniversity = async function (userName, secret) {
     const enrollment = await ca.enroll({ enrollmentID: userName, enrollmentSecret: secret })
     const identity = X509WalletMixin.createIdentity(orgMSPID, enrollment.certificate, enrollment.key.toBytes())
     wallet.import(userName, identity)
-
-    response = { result: { role: 'STUDENT' }, error: null }
     // response = fetchUserRole(userName)
+    // console.log(response)
+    response = { result: { role: 'UNIVERSITY' }, error: null }
     return response
   } catch (error) {
     console.error(`Failed to authenticate: ${error}`)
@@ -74,6 +75,8 @@ function fetchUserRole (userName) {
 
     // Get the network (channel) our contract is deployed to.
     const network = gateway.getNetwork(channelName)
+
+    console.log(network)
 
     // Get the contract from the network.
     const contract = network.getContract(chaincodeName)

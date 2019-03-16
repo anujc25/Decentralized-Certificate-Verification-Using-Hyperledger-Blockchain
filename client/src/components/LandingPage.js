@@ -12,18 +12,35 @@ class LandingPage extends Component {
   doLogin = (e) => {
 
     var payload = {
-      username: "app-admin",
-      secret : "app-adminpw"
+      username: "vericert-admin",
+      secret : "vericert-adminpw"
   }
 
   API.universityLogin(payload)
       .then((res) => {
-          if (res.error != null) {
-            this.props.history.push('/homepage')
+        console.log(res);
+          if (!res.error && res.result && res.result.role) {
+            switch (res.result.role) {
+              case "STUDENT":
+                this.props.history.push('/homepage/student')  
+                break;
+                case "UNIVERSITY":
+                this.props.history.push('/homepage/university')  
+                break;
+                case "EMPLOYER":
+                this.props.history.push('/homepage/employer')  
+                break;
+            
+              default:
+                this.setState({
+                  loginError: "Login Failed. " + res.error,
+                });
+                break;
+            }
           } else {
-              this.setState({
-                loginError: "Login Failed. " + res.error,
-              });
+            this.setState({
+              loginError: "Login Failed. " + res.error,
+            });            
           }
       });
   }

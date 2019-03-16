@@ -49,7 +49,7 @@
         }
     },
     "channels": {
-        "channel1": {
+        "channel2": {
             "orderers": [
                 "184.172.229.9:31759"
             ],
