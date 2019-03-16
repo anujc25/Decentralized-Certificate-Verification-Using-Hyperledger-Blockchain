@@ -104,13 +104,13 @@ func (s *SmartContract) updateCertificate(APIstub shim.ChaincodeStubInterface, a
 }
 
 func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Response {
-	value, found, err := cid.GetAttributeValue(APIstub, "role")
+	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse = "{\"error\": " + err.Error() + "\"}"
+		errResponse := "{\"error\": " + err.Error() + "\"}"
 		return shim.Error(errResponse)
 	}
 	response := "{\"role\": " + value + "\"}"
-	return shim.Success(response)
+	return shim.Success([]byte(response))
 }
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
