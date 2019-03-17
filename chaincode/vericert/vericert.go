@@ -136,8 +136,8 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	}
 	//  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the marble.
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
-	value := []byte{0x00}
-	APIstub.PutState(issuerUuidIndexKey, value)
+	nilValue := []byte{0x00}
+	APIstub.PutState(issuerUuidIndexKey, nilValue)
 
 	// ==== Diploma saved and indexed. Return success ====
 	fmt.Println("- end add diploma")
@@ -187,7 +187,7 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 // addPaginationMetadataToQueryResults adds QueryResponseMetadata, which contains pagination
 // info, to the constructed query results
 // ===========================================================================================
-func addPaginationMetadataToQueryResults(buffer *bytes.Buffer, responseMetadata *pb.QueryResponseMetadata) *bytes.Buffer {
+func addPaginationMetadataToQueryResults(buffer *bytes.Buffer, responseMetadata *sc.QueryResponseMetadata) *bytes.Buffer {
 
 	buffer.WriteString("[{\"ResponseMetadata\":{\"RecordsCount\":")
 	buffer.WriteString("\"")
