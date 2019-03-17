@@ -13,7 +13,7 @@ class BrowserRouters extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path='/' render={() => <LandingPage />} />
+          <Route exact path='/' render={() => <HomePageUniversity />} />
           <Route exact path='/registeruniversity' render={() => <RegisterUniversity />} />
           <Route exact path='/homepage' render={() => <HomePage />} />
           <Route exact path='/homepage/student' render={() => <HomePageStudent />} />
