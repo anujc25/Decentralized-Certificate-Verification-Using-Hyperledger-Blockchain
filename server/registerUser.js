@@ -56,14 +56,14 @@ async function main() {
         const adminIdentity = gateway.getCurrentIdentity();
 
 
-        const studentAttr = {
+        const attr = {
             name: "role",
-            value: "STUDENT",
+            value: "UNIVERSITY",
             ecert: true    
         }
 
         // Register the user, enroll the user, and import the new identity into the wallet.
-        const secret = await ca.register({ affiliation: 'org1', enrollmentID: userName, role: 'client', attrs: [studentAttr]}, adminIdentity);
+        const secret = await ca.register({ affiliation: 'org1', enrollmentID: userName, role: 'client', attrs: [attr]}, adminIdentity);
 
         console.log("userName:" , userName)
         console.log("secret:" , secret)

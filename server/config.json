@@ -1,11 +1,11 @@
 {
     "connection_file": "connection.json",
-    "appAdmin": "vericert-admin",
-    "appAdminSecret": "vericert-adminpw",
-    "orgMSPID": "org1msp",
-    "caName": "184.172.229.9:31070",
-    "userName": "ac.student.1",
+    "appAdmin": "admin",
+    "appAdminSecret": "adminpw",
+    "orgMSPID": "msptrustcert",
+    "caName": "173.193.75.36:30221",
+    "userName": "etestgape",
     "gatewayDiscovery": { "enabled": true, "asLocalhost": false },
-    "chaincodeName" : "vericert",
-    "channelName" : "channel2"
+    "chaincodeName" : "trustcert",
+    "channelName" : "channel1"
 }
