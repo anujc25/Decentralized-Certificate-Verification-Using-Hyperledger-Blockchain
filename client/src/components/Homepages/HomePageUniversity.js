@@ -36,18 +36,18 @@ class HomePageUniversity extends Component{
                 formData.append("degree",this.state.degree)
                 formData.append("department",this.state.department)
 
-                API.uploadstudentcertificate(formData)
-                    .then((status) => {
-                        console.log(status)
-                        if (status.Status === "ok") {
-                            this.setState({
-                                message: "Certificate successfully uploaded",
-                            });
-                        } else {
-                            this.setState({
-                                message: "Certificate upload Falied",
-                            });
-                        }
+                API.uploadStudentDiploma(formData)
+                    .then((res) => {
+                        console.log(res)
+                        this.setState({
+                            message: res.Status,
+                        });                        
+                    })
+                    .catch((res) => {
+                        console.log(res)
+                        this.setState({
+                            message: res.Status,
+                        });   
                     });
             }.bind(this); 
         }.bind(this))();
