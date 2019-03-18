@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -92,30 +93,38 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 }
 
 // Expected args[]
-// 		0		1		2		3	  4		5	   6	7		8
-// [timestamp, UUID, issuer, term, degree, dept, name, email, ipfslink]
+// 	0		1		2	  3		4	   5	  6
+// [UUID, term, degree, dept, name, email, ipfslink]
 func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	fmt.Println("- start add diploma")
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse := "{\"error\": " + err.Error() + "\"}"
+		errResponse := "{\"error\": \"" + err.Error() + "\"}"
 		return shim.Error(errResponse)
 	}
 	if value != UNIVERSITY_ROLE {
-		errResponse := "{\"error\": " + "Current role" + value + "is unauthorized for the transaction" + "\"}"
+		errResponse := "{\"error\": \"" + "Current role" + value + "is unauthorized for the transaction" + "\"}"
 		return shim.Error(errResponse)
 	}
 
-	if len(args) != 9 {
-		errResponse := "{\"error\": " + "Incorrect number of arguments. Expecting 9" + "\"}"
+	if len(args) != 7 {
+		errResponse := "{\"error\": \"" + "Incorrect number of arguments. Expecting 7" + "\"}"
+		return shim.Error(errResponse)
+	}
+
+	// fetching IssuerID from certificate
+	issuerID, err := cid.GetID(APIstub)
+	if err != nil {
+		errResponse := "{\"error\": \"" + err.Error() + "\"}"
 		return shim.Error(errResponse)
 	}
 
 	// Upload diploma transaction
-	var diplomaUUID = args[1]
-	var diplomaMetadata = DiplomaMetadata{Timestamp: args[0], DiplomaUUID: args[1], Issuer: args[2], Term: args[3], Degree: args[4], Department: args[5], Name: args[6], EmailId: args[7], IpfsLink: args[8]}
+	diplomaUUID := args[0]
+	timeStamp := time.Now().UTC().String()
+	var diplomaMetadata = DiplomaMetadata{Timestamp: timeStamp, DiplomaUUID: args[0], Issuer: issuerID, Term: args[1], Degree: args[2], Department: args[3], Name: args[4], EmailId: args[5], IpfsLink: args[6]}
 
 	diplomaMetadataAsBytes, err := json.Marshal(diplomaMetadata)
 	if err != nil {
@@ -209,11 +218,11 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse := "{\"error\": " + err.Error() + "\"}"
+		errResponse := "{\"error\": \"" + err.Error() + "\"}"
 		return shim.Error(errResponse)
 	}
 	if value != UNIVERSITY_ROLE {
-		errResponse := "{\"error\": " + "Current role" + value + "is unauthorized for the transaction" + "\"}"
+		errResponse := "{\"error\": \"" + "Current role" + value + "is unauthorized for the transaction" + "\"}"
 		return shim.Error(errResponse)
 	}
 
@@ -247,7 +256,7 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Response {
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse := "{\"error\": " + err.Error() + "\"}"
+		errResponse := "{\"error\": \"" + err.Error() + "\"}"
 		return shim.Error(errResponse)
 	}
 	response := "{\"role\": \"" + value + "\"}"
