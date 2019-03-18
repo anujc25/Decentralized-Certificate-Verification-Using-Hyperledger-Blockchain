@@ -45,6 +45,26 @@
         }
     },
     "channels":{
-        "channel1":{}
+        "channel1":{
+            "orderers": {
+                "173.193.75.36:32605": {
+                    "url": "grpcs://173.193.75.36:32605",
+                    "tlsCACerts": {
+                        "pem": "-----BEGIN CERTIFICATE-----\nMIICFzCCAb6gAwIBAgIUaL16INCDkStHxSmhRIgtdkbrw84wCgYIKoZIzj0EAwIw\nXTELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMQ4wDAYDVQQDEwV0bHNjYTAe\nFw0xOTAzMTYyMzM3MDBaFw0zNDAzMTIyMzM3MDBaMF0xCzAJBgNVBAYTAlVTMRcw\nFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTEUMBIGA1UEChMLSHlwZXJsZWRnZXIxDzAN\nBgNVBAsTBkZhYnJpYzEOMAwGA1UEAxMFdGxzY2EwWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAAR+03dYT9M+17mz1zDbI/82D4uzpwWz0bI+k9MBWPjrRgaftzEJFKwI\n4qmPOKgPw0MoPDvCe4+rQYgYN2ND+blio1wwWjAOBgNVHQ8BAf8EBAMCAQYwEgYD\nVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQUIojjejUTou3AStHVIoRIeq9DORIw\nFQYDVR0RBA4wDIcErcFLJIcECi96GTAKBggqhkjOPQQDAgNHADBEAiAlNMOuo9s5\nbHXLFqMKckdjRyEHxeHdxz+geXjRhrWLVQIgdls3tgqk64HM7/MeEl7XRSjjUklI\nkQjEktz+JktuWgA=\n-----END CERTIFICATE-----\n"
+                    }
+                }
+            },
+            "peers": {
+                "173.193.75.36:31438": {
+                    "url": "grpcs://173.193.75.36:31438",
+                    "tlsCACerts": {
+                        "pem": "-----BEGIN CERTIFICATE-----\nMIICFzCCAb6gAwIBAgIUGu/tZa0B7OSWjIlYA8e8u5oadsswCgYIKoZIzj0EAwIw\nXTELMAkGA1UEBhMCVVMxFzAVBgNVBAgTDk5vcnRoIENhcm9saW5hMRQwEgYDVQQK\nEwtIeXBlcmxlZGdlcjEPMA0GA1UECxMGRmFicmljMQ4wDAYDVQQDEwV0bHNjYTAe\nFw0xOTAzMTYyMjU2MDBaFw0zNDAzMTIyMjU2MDBaMF0xCzAJBgNVBAYTAlVTMRcw\nFQYDVQQIEw5Ob3J0aCBDYXJvbGluYTEUMBIGA1UEChMLSHlwZXJsZWRnZXIxDzAN\nBgNVBAsTBkZhYnJpYzEOMAwGA1UEAxMFdGxzY2EwWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAARy4VKxZRFAZC4JdYLHP9xnezSAOfRDqS97QqcuUGc/OV6KZivpq9Cv\n/TPVvat0Z6iFuS+8xHo4bGt5iCSyhdY5o1wwWjAOBgNVHQ8BAf8EBAMCAQYwEgYD\nVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQUIY1wB+SK3YmaKMIBtX+MW40JDFUw\nFQYDVR0RBA4wDIcErcFLJIcECi96GTAKBggqhkjOPQQDAgNHADBEAiBbYDYqWR4n\nxilBLW8Vfx2t+Sa/5ksaipsVlhNTC8oUmwIgSXWl2xYr9+n3hY55vtd9TC4gE9EH\nkJP5cU3VRhl8GgA=\n-----END CERTIFICATE-----\n"
+                    },
+                    "grpcOptions": {
+                        "ssl-target-name-override": "173.193.75.36"
+                    }
+                }
+            }
+        }
     }
 }

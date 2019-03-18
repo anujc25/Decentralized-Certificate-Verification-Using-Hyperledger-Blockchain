@@ -1,10 +1,10 @@
 {
     "connection_file": "connection.json",
-    "appAdmin": "admin",
-    "appAdminSecret": "adminpw",
+    "appAdmin": "admin_test",
+    "appAdminSecret": "admin_testpw",
     "orgMSPID": "msptrustcert",
     "caName": "173.193.75.36:30221",
-    "userName": "etestgape",
+    "userName": "z_test_gape",
     "gatewayDiscovery": { "enabled": true, "asLocalhost": false },
     "chaincodeName" : "trustcert",
     "channelName" : "channel1"
