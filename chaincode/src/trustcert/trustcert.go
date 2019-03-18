@@ -250,7 +250,7 @@ func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Re
 		errResponse := "{\"error\": " + err.Error() + "\"}"
 		return shim.Error(errResponse)
 	}
-	response := "{\"role\": " + value + "\"}"
+	response := "{\"role\": \"" + value + "\"}"
 	return shim.Success([]byte(response))
 }
 
