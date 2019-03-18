@@ -28,25 +28,25 @@ exports.loginUniversity = async function (userName, secret) {
   try {
     var response = { result: null, error: null }
 
-    // const caURL = ccp.certificateAuthorities[caName].url
-    // const ca = new FabricCAServices(caURL)
+    const caURL = ccp.certificateAuthorities[caName].url
+    const ca = new FabricCAServices(caURL)
 
-    // // Create a new file system based wallet for managing identities.
-    // const wallet = new FileSystemWallet(walletPath)
+    // Create a new file system based wallet for managing identities.
+    const wallet = new FileSystemWallet(walletPath)
 
-    // const userExists = await wallet.exists(userName)
-    // if (userExists) {
-    //   await wallet.delete(userName)
-    // }
+    const userExists = await wallet.exists(userName)
+    if (userExists) {
+      await wallet.delete(userName)
+    }
 
-    // // Enroll the user, and import the new identity into the wallet.
-    // const enrollment = await ca.enroll({ enrollmentID: userName, enrollmentSecret: secret })
-    // const identity = X509WalletMixin.createIdentity(orgMSPID, enrollment.certificate, enrollment.key.toBytes())
-    // await wallet.import(userName, identity)
+    // Enroll the user, and import the new identity into the wallet.
+    const enrollment = await ca.enroll({ enrollmentID: userName, enrollmentSecret: secret })
+    const identity = X509WalletMixin.createIdentity(orgMSPID, enrollment.certificate, enrollment.key.toBytes())
+    await wallet.import(userName, identity)
     var result = await fetchUserRole(userName)
     response.result = result
     // response = { result: { role: 'UNIVERSITY' }, error: null }
-    console.log("Response: ", response)
+    console.log('Response: ', response)
     return response
   } catch (error) {
     console.error(`Failed to authenticate: ${error}`)
@@ -97,11 +97,11 @@ async function fetchUserRole (userName) {
     console.log(result)
 
     // response.result = result.toJSON()
-    
+
     // console.log(`Transaction has been evaluated, result is: ${role}`)
     console.log(`Transaction has been evaluated, result is: ${result.toString()}`)
     var role = JSON.parse(result.toString())
-    console.log("role:" , role)
+    console.log('role:', role)
     return role
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`)

@@ -4,7 +4,7 @@
     "appAdminSecret": "z-app-adminpw",
     "orgMSPID": "org1msp",
     "caName": "173.193.75.36:30839",
-    "userName": "z-test-gape-1",
+    "userName": "z-test-gape-3",
     "gatewayDiscovery": { "enabled": true, "asLocalhost": false },
     "chaincodeName" : "trustcert",
     "channelName" : "mychannel"

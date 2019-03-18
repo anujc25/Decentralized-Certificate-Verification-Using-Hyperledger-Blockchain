@@ -12,8 +12,8 @@ class LandingPage extends Component {
   doLogin = (e) => {
 
     var payload = {
-      username: "admin",
-      secret : "adminpw"
+      username: "z-test-gape-3",
+      secret : "plfhphtzMfJG"
   }
 
   API.universityLogin(payload)

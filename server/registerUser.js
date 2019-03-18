@@ -61,7 +61,7 @@ async function main () {
     }
 
     // Register the user, enroll the user, and import the new identity into the wallet.
-    const secret = await ca.register({ affiliation: 'org1', enrollmentID: userName, role: 'client', attrs: [attr] }, adminIdentity)
+    const secret = await ca.register({ affiliation: 'org1', enrollmentID: userName, maxEnrollments: -1, role: 'client', attrs: [attr] }, adminIdentity)
 
     console.log('userName:', userName)
     console.log('secret:', secret)
