@@ -72,20 +72,25 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 // 	   0
 // [diplomaUUID]
 func (s *SmartContract) queryDiploma(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+	response := Response{}
 
 	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
+		response.error = "Incorrect number of arguments. Expecting 1"
+		return sendResponse(response, false)
 	}
 
 	diplomaMetadataAsBytes, err := APIstub.GetState(args[0])
 	if diplomaMetadataAsBytes == nil {
-		return shim.Error("No Diploma found for given ID!")
+		response.error = "No Diploma found for given ID!"
+		return sendResponse(response, false)
 	}
 	if err != nil {
-		return shim.Error(err.Error())
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 
-	return shim.Success(diplomaMetadataAsBytes)
+	response.result = diplomaMetadataAsBytes
+	return sendResponse(response, true)
 }
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -96,29 +101,29 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 // 	0		1		2	  3		4	   5	  6
 // [UUID, term, degree, dept, name, email, ipfslink]
 func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
+	response := Response{}
 	fmt.Println("- start add diploma")
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse := "{\"error\": \"" + err.Error() + "\"}"
-		return shim.Error(errResponse)
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 	if value != UNIVERSITY_ROLE {
-		errResponse := "{\"error\": \"" + "Current role" + value + "is unauthorized for the transaction" + "\"}"
-		return shim.Error(errResponse)
+		response.error = "Current role" + value + "is unauthorized for the transaction"
+		return sendResponse(response, false)
 	}
 
 	if len(args) != 7 {
-		errResponse := "{\"error\": \"" + "Incorrect number of arguments. Expecting 7" + "\"}"
-		return shim.Error(errResponse)
+		response.error = "Incorrect number of arguments. Expecting 7"
+		return sendResponse(response, false)
 	}
 
 	// fetching IssuerID from certificate
 	issuerID, err := cid.GetID(APIstub)
 	if err != nil {
-		errResponse := "{\"error\": \"" + err.Error() + "\"}"
-		return shim.Error(errResponse)
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 
 	// Upload diploma transaction
@@ -128,12 +133,14 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 
 	diplomaMetadataAsBytes, err := json.Marshal(diplomaMetadata)
 	if err != nil {
-		return shim.Error(err.Error())
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 
 	err = APIstub.PutState(diplomaUUID, diplomaMetadataAsBytes)
 	if err != nil {
-		return shim.Error(err.Error())
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 
 	// Indexing diploma for different query
@@ -141,7 +148,8 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	indexName := "issuer~uuid"
 	issuerUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{diplomaMetadata.Issuer, diplomaMetadata.DiplomaUUID})
 	if err != nil {
-		return shim.Error(err.Error())
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 	//  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the marble.
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
@@ -150,46 +158,32 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 
 	// ==== Diploma saved and indexed. Return success ====
 	fmt.Println("- end add diploma")
-	return shim.Success(nil)
+	return sendResponse(response, true)
 }
 
 func (s *SmartContract) updateDiploma(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	return shim.Success(nil)
+	return sendResponse(Response{}, true)
 }
 
 // ===========================================================================================
 // constructQueryResponseFromIterator constructs a JSON array containing query results from
 // a given result iterator
 // ===========================================================================================
-func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) (*bytes.Buffer, error) {
+func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]QueryResult, error) {
 	// buffer is a JSON array containing QueryResults
-	var buffer bytes.Buffer
-	buffer.WriteString("[")
+	arrQueryResponse := []QueryResult{}
 
-	bArrayMemberAlreadyWritten := false
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return nil, err
 		}
-		// Add a comma before array members, suppress it for the first array member
-		if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",")
-		}
-		buffer.WriteString("{\"Key\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(queryResponse.Key)
-		buffer.WriteString("\"")
-
-		buffer.WriteString(", \"Record\":")
-		// Record is a JSON object, so we write as-is
-		buffer.WriteString(string(queryResponse.Value))
-		buffer.WriteString("}")
-		bArrayMemberAlreadyWritten = true
+		qr := QueryResult{}
+		qr.Key = queryResponse.Key
+		qr.Record = string(queryResponse.Value)
+		arrQueryResponse = append(arrQueryResponse, qr)
 	}
-	buffer.WriteString("]")
-
-	return &buffer, nil
+	return arrQueryResponse, nil
 }
 
 // ===========================================================================================
@@ -215,19 +209,22 @@ func addPaginationMetadataToQueryResults(buffer *bytes.Buffer, responseMetadata 
 // [issuer]
 func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
+	response := Response{}
+
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse := "{\"error\": \"" + err.Error() + "\"}"
-		return shim.Error(errResponse)
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 	if value != UNIVERSITY_ROLE {
-		errResponse := "{\"error\": \"" + "Current role" + value + "is unauthorized for the transaction" + "\"}"
-		return shim.Error(errResponse)
+		response.error = "Current role" + value + "is unauthorized for the transaction"
+		return sendResponse(response, false)
 	}
 
 	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
+		response.error = "Incorrect number of arguments. Expecting 1"
+		return sendResponse(response, false)
 	}
 
 	fmt.Println("- start queryDiplomaByIssuer", args[0])
@@ -237,30 +234,32 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 	// This will execute a key range query on all keys starting with 'Issuer'
 	issuerDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("issuer~uuid", []string{issuer})
 	if err != nil {
-		return shim.Error(err.Error())
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 	defer issuerDiplomaResultsIterator.Close()
 
-	buffer, err := constructQueryResponseFromIterator(issuerDiplomaResultsIterator)
+	result, err := constructQueryResponseFromIterator(issuerDiplomaResultsIterator)
 	if err != nil {
-		return shim.Error(err.Error())
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
 
-	fmt.Printf("- queryDimplomaByIssuer queryResult:\n%s\n", buffer.String())
+	fmt.Printf("- queryDimplomaByIssuer queryResult:\n%v\n", result)
 
-	return shim.Success(buffer.Bytes())
-
-	return shim.Success(nil)
+	response.result = result
+	return sendResponse(response, true)
 }
 
 func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Response {
+	response := Response{}
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		errResponse := "{\"error\": \"" + err.Error() + "\"}"
-		return shim.Error(errResponse)
+		response.error = err.Error()
+		return sendResponse(response, false)
 	}
-	response := "{\"role\": \"" + value + "\"}"
-	return shim.Success([]byte(response))
+	response.result = Role{role: value}
+	return sendResponse(response, true)
 }
 
 // The main function is only relevant in unit test mode. Only included here for completeness.
@@ -270,4 +269,12 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error creating new Smart Contract: %s", err)
 	}
+}
+
+func sendResponse(response Response, bSuccess bool) sc.Response {
+	responseStr, _ := json.Marshal(response)
+	if bSuccess {
+		return shim.Success(responseStr)
+	}
+	return shim.Error(string(responseStr))
 }
