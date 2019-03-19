@@ -8,6 +8,8 @@ class HomePageUniversity extends Component{
         term:'',
         degree:'',
         department:'',
+        studentName:'',
+        studentEmail:'',
         message : ''
     };
 
@@ -35,6 +37,8 @@ class HomePageUniversity extends Component{
                 formData.append("term",this.state.term)
                 formData.append("degree",this.state.degree)
                 formData.append("department",this.state.department)
+                formData.append("studentName",this.state.studentName)
+                formData.append("studentEmail",this.state.studentEmail)
 
                 API.uploadStudentDiploma(formData)
                     .then((res) => {
@@ -66,6 +70,28 @@ class HomePageUniversity extends Component{
 
                 <div className="form-group">
                 <form encType="multipart/form-data" onSubmit={this.onSubmit}>
+
+                <label for="issuer">Student Name</label>
+                <input type="text" className="form-control" id="studentName"  placeholder="Enter Student Name"
+                            onChange={(event) => {
+                            this.setState({
+                                    ...this.state,
+                                    studentName: event.target.value
+                                });
+                            }}
+                            >
+                    </input>
+
+                    <label for="issuer">Student Email</label>
+                    <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Student Email"
+                               onChange={(event) => {
+                                this.setState({
+                                        ...this.state,
+                                        studentEmail: event.target.value
+                                    });
+                                }}
+                                >
+                        </input>
 
                     <label for="issuer">Issuer</label>
                     <input type="text" className="form-control" id="issuer"  placeholder="Enter Issuer Name"
