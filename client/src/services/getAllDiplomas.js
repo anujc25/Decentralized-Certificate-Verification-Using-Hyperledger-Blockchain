@@ -1,17 +1,16 @@
 const api = process.env.REACT_APP_CONTACTS_API_URL || 'http://localhost:3001'
 
 const headers = {
-    'Accept': 'application/json'
-  }
+  'Accept': 'application/json'
+}
 
 export const allDiplomas = (payload) =>
-  fetch(`${api}/university/studentdiploma`, {
+  fetch(`${api}/university/studentdiploma/` + payload.username, {
     method: 'GET',
     headers: {
-        ...headers,
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
+      ...headers,
+      'Content-Type': 'application/json'
+    }
   })
     .then(res => res.json())
     .then(res => {

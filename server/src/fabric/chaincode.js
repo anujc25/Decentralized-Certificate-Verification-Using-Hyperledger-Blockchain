@@ -80,7 +80,6 @@ exports.queryDiplomaByIssuer = async function (userName, uuid) {
     var arrDiploma = []
     for (var i = 0; i < jsonResult.result.length; i++) {
       arrDiploma.push(JSON.parse(jsonResult.result[i]))
-      arrDiploma.push(i)
     }
     jsonResult.result = arrDiploma
     console.log('getDiploma2:', jsonResult)

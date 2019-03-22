@@ -17,8 +17,8 @@ router.post('/studentdiploma', async function (req, res) {
   }
 })
 
-router.get('/studentdiploma', async function (req, res) {
-  var response = await chaincode.queryDiplomaByIssuer(req.body.username)
+router.get('/studentdiploma/:username', async function (req, res) {
+  var response = await chaincode.queryDiplomaByIssuer(req.params.username)
 
   if (response.Error === '') {
     res.status(200).send(response.result)
