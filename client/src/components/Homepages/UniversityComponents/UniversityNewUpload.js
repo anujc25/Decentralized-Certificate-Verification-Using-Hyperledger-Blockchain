@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
+import { withRouter } from 'react-router-dom'
 import * as API from '../../../services/certificateUploadService';
 // import '../../css/offCanvas.css';
+import '../../../css/popup.css';
 
 class UniversityNewUpload extends Component{
    state = {
@@ -62,105 +64,108 @@ class UniversityNewUpload extends Component{
 
     render(){
         return(
-            <div className="container">
-                <div className="row">
-                <div className="col-sm">
-                </div>
-                <div className="col-sm">
-                <h1> Home Page for University</h1>
-
-                <div className="form-group">
-                <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-
-                <label for="issuer">Student Name</label>
-                <input type="text" className="form-control" id="studentName"  placeholder="Enter Student Name"
-                            onChange={(event) => {
-                            this.setState({
-                                    ...this.state,
-                                    studentName: event.target.value
-                                });
-                            }}
-                            >
-                    </input>
-
-                    <label for="issuer">Student Email</label>
-                    <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Student Email"
-                               onChange={(event) => {
-                                this.setState({
-                                        ...this.state,
-                                        studentEmail: event.target.value
-                                    });
-                                }}
-                                >
-                        </input>
-
-                    <label for="issuer">Issuer</label>
-                    <input type="text" className="form-control" id="issuer"  placeholder="Enter Issuer Name"
-                               onChange={(event) => {
-                                this.setState({
-                                        ...this.state,
-                                        issuer: event.target.value
-                                    });
-                                }}
-                                >
-                        </input>
-
-                    <label for="term">Term</label>
-                    <input type="text" className="form-control" id="term" placeholder="Enter Graduation Term"
-                               onChange={(event) => {
-                                this.setState({
-                                        ...this.state,
-                                        term: event.target.value
-                                    });
-                                }}
-                                >
-                        </input>
-
-                    <label for="degree">Degree</label>
-                    <input type="text" className="form-control" id="degree" placeholder="Enter Degree Name"
-                               onChange={(event) => {
-                                this.setState({
-                                        ...this.state,
-                                        degree: event.target.value
-                                    });
-                                }}
-                                >
-                        </input>
-
-                    <label for="department">Department </label>
-                    <input type="text" className="form-control" id="department" aria-describedby="emailHelp" placeholder="Enter Department Name"
-                               onChange={(event) => {
-                                this.setState({
-                                        ...this.state,
-                                        department: event.target.value
-                                    });
-                                }}
-                                >
-                        </input>
-                        
-                        <label for="fileupload">fileupload</label>
-                        <input className="form-control" type="file" name="selectedFile" onChange={this.onChange} />
-                        <div style={{ 'width': '5px',
-                                      'height': 'auto',
-                                      'display': 'inline-block' }} />
-                        <div>
-                            <button className='btn btn-primary' type="submit">Submit</button>
+            <div className='popup'>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm-3">
                         </div>
+                        <div className="col-sm-6 rounded" style={{"background-color":"#222"}}>
+                            <h1> Upload Diploma</h1>
 
-                </form>
-                <label for="message">{this.state.message}</label>
-                </div>
+                            <div className="form-group">
+                                <form encType="multipart/form-data" onSubmit={this.onSubmit}>
+                                <div className="row">
+                                <div className="col-sm-6">
+                                    <label for="issuer">Student Name</label>
+                                    <input type="text" className="form-control" id="studentName"  placeholder="Enter Student Name"
+                                        onChange={(event) => {
+                                        this.setState({
+                                                ...this.state,
+                                                studentName: event.target.value
+                                            });
+                                        }}
+                                    >
+                                    </input>
 
+                                    <label for="issuer">Student Email</label>
+                                    <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Student Email"
+                                        onChange={(event) => {
+                                            this.setState({
+                                                    ...this.state,
+                                                    studentEmail: event.target.value
+                                                });
+                                            }}
+                                    >
+                                    </input>
+
+                                    <label for="issuer">Issuer</label>
+                                    <input type="text" className="form-control" id="issuer"  placeholder="Enter Issuer Name"
+                                        onChange={(event) => {
+                                            this.setState({
+                                                    ...this.state,
+                                                    issuer: event.target.value
+                                                });
+                                            }}
+                                    >
+                                    </input>
+
+                                    <label for="term">Term</label>
+                                    <input type="text" className="form-control" id="term" placeholder="Enter Graduation Term"
+                                        onChange={(event) => {
+                                            this.setState({
+                                                    ...this.state,
+                                                    term: event.target.value
+                                                });
+                                            }}
+                                    >
+                                    </input>
+                                    </div>
+                                    <div className="col-sm-6">
+                                    <label for="degree">Degree</label>
+                                    <input type="text" className="form-control" id="degree" placeholder="Enter Degree Name"
+                                        onChange={(event) => {
+                                            this.setState({
+                                                    ...this.state,
+                                                    degree: event.target.value
+                                                });
+                                            }}
+                                    >
+                                    </input>
+
+                                    <label for="department">Department </label>
+                                    <input type="text" className="form-control" id="department" aria-describedby="emailHelp" placeholder="Enter Department Name"
+                                        onChange={(event) => {
+                                            this.setState({
+                                                    ...this.state,
+                                                    department: event.target.value
+                                                });
+                                            }}
+                                    >
+                                    </input>
+                                    
+                                    <label for="fileupload">fileupload</label>
+                                    <input className="form-control" type="file" name="selectedFile" onChange={this.onChange} />
+                                    </div>
+                                    </div>
+                                    <div style={{ 'width': '5px',
+                                                'height': 'auto',
+                                                'display': 'inline-block' }} />
+                                    <div>
+                                        <button className='btn btn-primary' type="submit">Submit</button>
+                                        <button className='btn btn-primary' onClick={() => this.props.closeUploadPopup()}>Close</button>
+                                    </div>
+
+                                </form>
+                                <label for="message">{this.state.message}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>                
+                    </div>
                 </div>
-                <div class="col-sm">
-                </div>
-                    
-                </div>
-                </div>
-                
-           
+            </div>      
         );
     }
 }
 
-export default UniversityNewUpload;
+export default withRouter(UniversityNewUpload);
