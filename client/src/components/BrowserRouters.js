@@ -4,6 +4,7 @@ import HomePage from '../components/Homepages/HomePage'
 import HomePageEmployer from '../components/Homepages/HomePageEmployer'
 import HomePageStudent from '../components/Homepages/HomePageStudent'
 import HomePageUniversity from '../components/Homepages/HomePageUniversity'
+import UniversityNewUpload from './Homepages/UniversityComponents/UniversityNewUpload'
 
 import RegisterUniversity from './UniversityRegister'
 import LandingPage from './LandingPage'
@@ -13,12 +14,13 @@ class BrowserRouters extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path='/' render={() => <LandingPage />} />
+          <Route exact path='/' render={() => <HomePageUniversity/>} />
           <Route exact path='/registeruniversity' render={() => <RegisterUniversity />} />
           <Route exact path='/homepage' render={() => <HomePage />} />
           <Route exact path='/homepage/student' render={() => <HomePageStudent />} />
           <Route exact path='/homepage/employer' render={() => <HomePageEmployer />} />
           <Route exact path='/homepage/university' render={() => <HomePageUniversity />} />
+          <Route exact path='/homepage/university/uploadcertificate' render={() => <UniversityNewUpload />} />
         </Switch>
       </BrowserRouter>
     )
