@@ -169,21 +169,24 @@ func (s *SmartContract) updateDiploma(APIstub shim.ChaincodeStubInterface, args 
 // constructQueryResponseFromIterator constructs a JSON array containing query results from
 // a given result iterator
 // ===========================================================================================
-func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]QueryResult, error) {
+func constructQueryResponseFromIterator(APIstub shim.ChaincodeStubInterface, resultsIterator shim.StateQueryIteratorInterface) ([]string, error) {
 	// buffer is a JSON array containing QueryResults
-	arrQueryResponse := []QueryResult{}
-
+	response := []string{}
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return nil, err
 		}
-		qr := QueryResult{}
-		qr.Key = queryResponse.Key
-		qr.Record = string(queryResponse.Value)
-		arrQueryResponse = append(arrQueryResponse, qr)
+		_, compositeKeyParts, err := APIstub.SplitCompositeKey(queryResponse.Key)
+		uuid := compositeKeyParts[1]
+
+		diplomaMetadataAsBytes, err := APIstub.GetState(uuid)
+		if diplomaMetadataAsBytes == nil || err != nil {
+			continue
+		}
+		response = append(response, string(diplomaMetadataAsBytes))
 	}
-	return arrQueryResponse, nil
+	return response, nil
 }
 
 // ===========================================================================================
@@ -204,9 +207,7 @@ func addPaginationMetadataToQueryResults(buffer *bytes.Buffer, responseMetadata 
 	return buffer
 }
 
-// Expected args[]
-// 	   0
-// [issuer]
+// No arguments required
 func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	response := Response{}
@@ -222,13 +223,12 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 		return sendResponse(response, false)
 	}
 
-	if len(args) != 1 {
-		response.Error = "Incorrect number of arguments. Expecting 1"
+	// fetching IssuerID from certificate
+	issuer, err := cid.GetID(APIstub)
+	if err != nil {
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
-
-	fmt.Println("- start queryDiplomaByIssuer", args[0])
-	issuer := args[0]
 
 	// Query the Issuer~UUID index by color
 	// This will execute a key range query on all keys starting with 'Issuer'
@@ -239,7 +239,7 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 	}
 	defer issuerDiplomaResultsIterator.Close()
 
-	result, err := constructQueryResponseFromIterator(issuerDiplomaResultsIterator)
+	result, err := constructQueryResponseFromIterator(APIstub, issuerDiplomaResultsIterator)
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)

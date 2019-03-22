@@ -44,10 +44,10 @@ exports.loginUniversity = async function (userName, secret) {
     const identity = X509WalletMixin.createIdentity(orgMSPID, enrollment.certificate, enrollment.key.toBytes())
     await wallet.import(userName, identity)
 
-    var result = await chaincode.fetchUserRole(userName)
-    response.result = result
-    console.log('Response: ', response)
-    return response
+    return await chaincode.fetchUserRole(userName)
+    // response.result = result
+    // console.log('Response: ', response)
+    // return response
   } catch (error) {
     console.error(`Failed to authenticate: ${error}`)
     response.error = error.message

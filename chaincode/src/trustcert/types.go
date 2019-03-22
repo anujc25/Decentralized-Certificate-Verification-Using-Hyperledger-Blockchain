@@ -12,5 +12,4 @@ type Role struct {
 
 type QueryResult struct {
 	Key    string `json:"Key"`
-	Record string `json:"Record"`
 }
