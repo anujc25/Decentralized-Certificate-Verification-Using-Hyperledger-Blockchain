@@ -75,21 +75,21 @@ func (s *SmartContract) queryDiploma(APIstub shim.ChaincodeStubInterface, args [
 	response := Response{}
 
 	if len(args) != 1 {
-		response.error = "Incorrect number of arguments. Expecting 1"
+		response.Error = "Incorrect number of arguments. Expecting 1"
 		return sendResponse(response, false)
 	}
 
 	diplomaMetadataAsBytes, err := APIstub.GetState(args[0])
 	if diplomaMetadataAsBytes == nil {
-		response.error = "No Diploma found for given ID!"
+		response.Error = "No Diploma found for given ID!"
 		return sendResponse(response, false)
 	}
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 
-	response.result = diplomaMetadataAsBytes
+	response.Result = diplomaMetadataAsBytes
 	return sendResponse(response, true)
 }
 
@@ -106,23 +106,23 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 	if value != UNIVERSITY_ROLE {
-		response.error = "Current role" + value + "is unauthorized for the transaction"
+		response.Error = "Current role" + value + "is unauthorized for the transaction"
 		return sendResponse(response, false)
 	}
 
 	if len(args) != 7 {
-		response.error = "Incorrect number of arguments. Expecting 7"
+		response.Error = "Incorrect number of arguments. Expecting 7"
 		return sendResponse(response, false)
 	}
 
 	// fetching IssuerID from certificate
 	issuerID, err := cid.GetID(APIstub)
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 
@@ -133,13 +133,13 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 
 	diplomaMetadataAsBytes, err := json.Marshal(diplomaMetadata)
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 
 	err = APIstub.PutState(diplomaUUID, diplomaMetadataAsBytes)
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 
@@ -148,7 +148,7 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	indexName := "issuer~uuid"
 	issuerUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{diplomaMetadata.Issuer, diplomaMetadata.DiplomaUUID})
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 	//  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the marble.
@@ -214,16 +214,16 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 	if value != UNIVERSITY_ROLE {
-		response.error = "Current role" + value + "is unauthorized for the transaction"
+		response.Error = "Current role" + value + "is unauthorized for the transaction"
 		return sendResponse(response, false)
 	}
 
 	if len(args) != 1 {
-		response.error = "Incorrect number of arguments. Expecting 1"
+		response.Error = "Incorrect number of arguments. Expecting 1"
 		return sendResponse(response, false)
 	}
 
@@ -234,20 +234,20 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 	// This will execute a key range query on all keys starting with 'Issuer'
 	issuerDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("issuer~uuid", []string{issuer})
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 	defer issuerDiplomaResultsIterator.Close()
 
 	result, err := constructQueryResponseFromIterator(issuerDiplomaResultsIterator)
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 
 	fmt.Printf("- queryDimplomaByIssuer queryResult:\n%v\n", result)
 
-	response.result = result
+	response.Result = result
 	return sendResponse(response, true)
 }
 
@@ -255,10 +255,10 @@ func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Re
 	response := Response{}
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
 	if err != nil {
-		response.error = err.Error()
+		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
-	response.result = Role{role: value}
+	response.Result = Role{Role: value}
 	return sendResponse(response, true)
 }
 
