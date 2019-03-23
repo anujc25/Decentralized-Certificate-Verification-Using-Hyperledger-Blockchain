@@ -16,6 +16,7 @@ import (
 )
 
 const UNIVERSITY_ROLE = "UNIVERSITY"
+const UNIVERSITY_ROLE = "STUDENT"
 
 // SmartContract Define the Smart Contract structure
 type SmartContract struct {
@@ -63,11 +64,14 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryDiplomaByIssuer(APIstub, args)
 	} else if function == "fetchUserRole" {
 		return s.fetchUserRole(APIstub)
+	} else if function == "shareDiploma" {
+		return s.shareDiploma(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
+// TODO: Check access before sending query result
 // Expected args[]
 // 	   0
 // [diplomaUUID]
@@ -259,6 +263,45 @@ func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Re
 		return sendResponse(response, false)
 	}
 	response.Result = Role{Role: value}
+	return sendResponse(response, true)
+}
+
+// Expected args[]
+// 	0		1
+// [UUID, userID]
+func (s *SmartContract) shareDiploma(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+	response := Response{}
+
+	if len(args) != 2 {
+		response.Error = "Incorrect number of arguments. Expecting 2"
+		return sendResponse(response, false)
+	}
+
+	// RBAC check
+	value, _, err := cid.GetAttributeValue(APIstub, "role")
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	if value != STUDENT_ROLE {
+		response.Error = "unauthorized! Only students are allowed to share their diploma"
+		return sendResponse(response, false)
+	}
+
+	// TODO: check ownership, only own diploma can be shared
+	// Creating a compositeKey with diploma UUID and the user who is granted access to diploma
+	indexName := "uuid~userid"
+	uuidUserIdIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{args[0], args[1]})
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	nilValue := []byte{0x00}
+	err := APIstub.PutState(uuidUserIdIndexKey, nilValue)
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
 	return sendResponse(response, true)
 }
 
