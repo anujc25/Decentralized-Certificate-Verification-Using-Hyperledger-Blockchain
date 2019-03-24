@@ -1,0 +1,43 @@
+uuid-authorizedPerson
+
+Student registration:
+1) Fills form, provides userid and hyperledger user is created
+2) Receives secret
+3) Student logs in
+4) Enters his/her institutional email addresses
+5) Verifies email confirmation
+6) From next login, user can view his/her diploma on dashboard
+
+Employer regitration:
+1) Fills form and provides his userid and email address
+2) Verifies email address using OTP
+3) Hyperledger user is created
+4) Receives secret
+5) Logs in and can see diploma shared with him
+
+
+
+TODO: QUERY DIPLOMA
+
+if role Uni:
+	check issuer == uni:
+		return diploma
+	else:	
+		return err
+
+if role not uni:
+	check compositekey
+	iterate result:
+		if user has access:
+			return diploma
+		else:
+			return err
+
+
+SHARE DIPLOMA :
+
+check role, only student can share
+
+TODO: check ownership, only own diploma can be shared
+
+create Compositekey for uuid-user
