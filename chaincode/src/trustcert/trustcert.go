@@ -63,6 +63,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.updateDiploma(APIstub, args)
 	} else if function == "queryDiplomaByIssuer" {
 		return s.queryDiplomaByIssuer(APIstub, args)
+	} else if function == "queryDiplomaForEmployer" {
+		return s.queryDiplomaForEmployer(APIstub, args)
+	} else if function == "queryDiplomaForStudent" {
+		return s.queryDiplomaForStudent(APIstub, args)
 	} else if function == "fetchUserRole" {
 		return s.fetchUserRole(APIstub)
 	} else if function == "shareDiploma" {
@@ -319,6 +323,51 @@ func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterf
 		response.Result = result
 		return sendResponse(response, true)
 	}
+}
+
+// Expected args[]
+// [list of students emailIds]
+func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterface, args) sc.Response {
+
+	response := Response{}
+
+	// RBAC check
+	value, _, err := cid.GetAttributeValue(APIstub, "role")
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	if value != STUDENT_ROLE {
+		response.Error = "Current role" + value + "is unauthorized for the transaction queryDiplomaForStudent"
+		return sendResponse(response, false)
+	}
+
+	combinedResult := []string{}
+
+	for index, studentEmailId := range args {
+		if studentEmailId != "" {
+			// Query the emailid~uuid index by emailId
+			// This will execute a key range query on all keys starting with 'studentEmailId'
+			emailIdDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("emailid~uuid", []string{studentEmailId})
+			if err != nil {
+				response.Error = err.Error()
+				return sendResponse(response, false)
+			}
+			defer emailIdDiplomaResultsIterator.Close()
+
+			result, err := constructQueryResponseFromIterator(APIstub, emailIdDiplomaResultsIterator)
+			if err != nil {
+				response.Error = err.Error()
+				return sendResponse(response, false)
+			}
+			combinedResult = append(combinedResult, result...)
+		}	
+	}
+
+	fmt.Printf("- queryDimplomaForStudent queryResult:\n%v\n", combinedResult)
+
+	response.Result = combinedResult
+	return sendResponse(response, true)
 }
 
 func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Response {
