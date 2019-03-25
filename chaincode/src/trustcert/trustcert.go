@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -169,10 +170,10 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 		return sendResponse(response, false)
 	}
 
-	// emailid - UUID index to query all the diploma of a student
-	// emailid -> Student's emailId
+	// studentEmailId - UUID index to query all the diploma of a student
+	// studentEmailId -> Student's emailId
 	// uuid -> diplomaUUID
-	indexName := "emailid~uuid"
+	indexName := "studentEmailId~uuid"
 	emailidUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{diplomaMetadata.EmailId, diplomaMetadata.DiplomaUUID})
 	if err != nil {
 		response.Error = err.Error()
@@ -301,11 +302,11 @@ func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterf
 		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
-
-	if employerEmailId != "" {
-		// Query the emailid~uuid index by emailId
+	
+	if strings.Compare(employerEmailId, "") != 0 {
+		// Query the employerEmailId~uuid index by emailId
 		// This will execute a key range query on all keys starting with 'employerEmailId'
-		employerDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("emailid~uuid", []string{employerEmailId})
+		employerDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("employerEmailId~uuid", []string{employerEmailId})
 		if err != nil {
 			response.Error = err.Error()
 			return sendResponse(response, false)
@@ -322,6 +323,10 @@ func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterf
 
 		response.Result = result
 		return sendResponse(response, true)
+	}
+	else {
+		response.Error = "No emailid found for the requesting user(employer)"
+		return sendResponse(response, false)
 	}
 }
 
@@ -345,10 +350,10 @@ func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterfa
 	combinedResult := []string{}
 
 	for index, studentEmailId := range args {
-		if studentEmailId != "" {
-			// Query the emailid~uuid index by emailId
+		if strings.Compare(studentEmailId, "") != 0 {
+			// Query the studentEmailId~uuid index by emailId
 			// This will execute a key range query on all keys starting with 'studentEmailId'
-			emailIdDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("emailid~uuid", []string{studentEmailId})
+			emailIdDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("studentEmailId~uuid", []string{studentEmailId})
 			if err != nil {
 				response.Error = err.Error()
 				return sendResponse(response, false)
@@ -405,8 +410,8 @@ func (s *SmartContract) shareDiploma(APIstub shim.ChaincodeStubInterface, args [
 
 	// Creating a compositeKey with the emailid of EMPLOYER who is granted access to diploma and diploma UUID
 	// uuid -> Diploma UUID
-	// emailid -> Employer's emailId
-	indexName := "emailid~uuid"
+	// employerEmailId -> Employer's emailId
+	indexName := "employerEmailId~uuid"
 	emailIdUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{args[0], args[1]})
 	if err != nil {
 		response.Error = err.Error()
