@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -16,7 +17,8 @@ import (
 )
 
 const UNIVERSITY_ROLE = "UNIVERSITY"
-const UNIVERSITY_ROLE = "STUDENT"
+const STUDENT_ROLE = "STUDENT"
+const EMPLOYER_ROLE = "EMPLOYER"
 
 // SmartContract Define the Smart Contract structure
 type SmartContract struct {
@@ -62,6 +64,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.updateDiploma(APIstub, args)
 	} else if function == "queryDiplomaByIssuer" {
 		return s.queryDiplomaByIssuer(APIstub, args)
+	} else if function == "queryDiplomaForEmployer" {
+		return s.queryDiplomaForEmployer(APIstub, args)
+	} else if function == "queryDiplomaForStudent" {
+		return s.queryDiplomaForStudent(APIstub, args)
 	} else if function == "fetchUserRole" {
 		return s.fetchUserRole(APIstub)
 	} else if function == "shareDiploma" {
@@ -158,7 +164,26 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	//  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the marble.
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
 	nilValue := []byte{0x00}
-	APIstub.PutState(issuerUuidIndexKey, nilValue)
+	err := APIstub.PutState(issuerUuidIndexKey, nilValue)
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+
+	// studentEmailId - UUID index to query all the diploma of a student
+	// studentEmailId -> Student's emailId
+	// uuid -> diplomaUUID
+	indexName := "studentEmailId~uuid"
+	emailidUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{diplomaMetadata.EmailId, diplomaMetadata.DiplomaUUID})
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	err := APIstub.PutState(emailidUuidIndexKey, nilValue)
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
 
 	// ==== Diploma saved and indexed. Return success ====
 	fmt.Println("- end add diploma")
@@ -234,7 +259,7 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 		return sendResponse(response, false)
 	}
 
-	// Query the Issuer~UUID index by color
+	// Query the Issuer~UUID index by issuer
 	// This will execute a key range query on all keys starting with 'Issuer'
 	issuerDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("issuer~uuid", []string{issuer})
 	if err != nil {
@@ -255,6 +280,101 @@ func (s *SmartContract) queryDiplomaByIssuer(APIstub shim.ChaincodeStubInterface
 	return sendResponse(response, true)
 }
 
+// No arguments required
+func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	response := Response{}
+
+	// RBAC check
+	value, _, err := cid.GetAttributeValue(APIstub, "role")
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	if value != EMPLOYER_ROLE {
+		response.Error = "Current role" + value + "is unauthorized for the transaction queryDiplomaForEmployer"
+		return sendResponse(response, false)
+	}
+
+	// get emailId of employer from certificate
+	employerEmailId, _, err := cid.GetAttributeValue(APIstub, "emailId")
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	
+	if strings.Compare(employerEmailId, "") != 0 {
+		// Query the employerEmailId~uuid index by emailId
+		// This will execute a key range query on all keys starting with 'employerEmailId'
+		employerDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("employerEmailId~uuid", []string{employerEmailId})
+		if err != nil {
+			response.Error = err.Error()
+			return sendResponse(response, false)
+		}
+		defer employerDiplomaResultsIterator.Close()
+
+		result, err := constructQueryResponseFromIterator(APIstub, employerDiplomaResultsIterator)
+		if err != nil {
+			response.Error = err.Error()
+			return sendResponse(response, false)
+		}
+
+		fmt.Printf("- queryDimplomaByEmployer queryResult:\n%v\n", result)
+
+		response.Result = result
+		return sendResponse(response, true)
+	}
+	else {
+		response.Error = "No emailid found for the requesting user(employer)"
+		return sendResponse(response, false)
+	}
+}
+
+// Expected args[]
+// [list of students emailIds]
+func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterface, args) sc.Response {
+
+	response := Response{}
+
+	// RBAC check
+	value, _, err := cid.GetAttributeValue(APIstub, "role")
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	if value != STUDENT_ROLE {
+		response.Error = "Current role" + value + "is unauthorized for the transaction queryDiplomaForStudent"
+		return sendResponse(response, false)
+	}
+
+	combinedResult := []string{}
+
+	for index, studentEmailId := range args {
+		if strings.Compare(studentEmailId, "") != 0 {
+			// Query the studentEmailId~uuid index by emailId
+			// This will execute a key range query on all keys starting with 'studentEmailId'
+			emailIdDiplomaResultsIterator, err := APIstub.GetStateByPartialCompositeKey("studentEmailId~uuid", []string{studentEmailId})
+			if err != nil {
+				response.Error = err.Error()
+				return sendResponse(response, false)
+			}
+			defer emailIdDiplomaResultsIterator.Close()
+
+			result, err := constructQueryResponseFromIterator(APIstub, emailIdDiplomaResultsIterator)
+			if err != nil {
+				response.Error = err.Error()
+				return sendResponse(response, false)
+			}
+			combinedResult = append(combinedResult, result...)
+		}	
+	}
+
+	fmt.Printf("- queryDimplomaForStudent queryResult:\n%v\n", combinedResult)
+
+	response.Result = combinedResult
+	return sendResponse(response, true)
+}
+
 func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Response {
 	response := Response{}
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
@@ -268,7 +388,7 @@ func (s *SmartContract) fetchUserRole(APIstub shim.ChaincodeStubInterface) sc.Re
 
 // Expected args[]
 // 	0		1
-// [UUID, userID]
+// [emailID, UUID]
 func (s *SmartContract) shareDiploma(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	response := Response{}
 
@@ -288,16 +408,17 @@ func (s *SmartContract) shareDiploma(APIstub shim.ChaincodeStubInterface, args [
 		return sendResponse(response, false)
 	}
 
-	// TODO: check ownership, only own diploma can be shared
-	// Creating a compositeKey with diploma UUID and the user who is granted access to diploma
-	indexName := "uuid~userid"
-	uuidUserIdIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{args[0], args[1]})
+	// Creating a compositeKey with the emailid of EMPLOYER who is granted access to diploma and diploma UUID
+	// uuid -> Diploma UUID
+	// employerEmailId -> Employer's emailId
+	indexName := "employerEmailId~uuid"
+	emailIdUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{args[0], args[1]})
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
 	nilValue := []byte{0x00}
-	err := APIstub.PutState(uuidUserIdIndexKey, nilValue)
+	err := APIstub.PutState(emailIdUuidIndexKey, nilValue)
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)
