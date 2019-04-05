@@ -8,8 +8,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -164,7 +164,7 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	//  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the marble.
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
 	nilValue := []byte{0x00}
-	err := APIstub.PutState(issuerUuidIndexKey, nilValue)
+	err = APIstub.PutState(issuerUuidIndexKey, nilValue)
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)
@@ -173,13 +173,13 @@ func (s *SmartContract) addDiploma(APIstub shim.ChaincodeStubInterface, args []s
 	// studentEmailId - UUID index to query all the diploma of a student
 	// studentEmailId -> Student's emailId
 	// uuid -> diplomaUUID
-	indexName := "studentEmailId~uuid"
+	indexName = "studentEmailId~uuid"
 	emailidUuidIndexKey, err := APIstub.CreateCompositeKey(indexName, []string{diplomaMetadata.EmailId, diplomaMetadata.DiplomaUUID})
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
-	err := APIstub.PutState(emailidUuidIndexKey, nilValue)
+	err = APIstub.PutState(emailidUuidIndexKey, nilValue)
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)
@@ -302,7 +302,7 @@ func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterf
 		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
-	
+
 	if strings.Compare(employerEmailId, "") != 0 {
 		// Query the employerEmailId~uuid index by emailId
 		// This will execute a key range query on all keys starting with 'employerEmailId'
@@ -324,15 +324,14 @@ func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterf
 		response.Result = result
 		return sendResponse(response, true)
 	}
-	else {
-		response.Error = "No emailid found for the requesting user(employer)"
-		return sendResponse(response, false)
-	}
+
+	response.Error = "No emailid found for the requesting user(employer)"
+	return sendResponse(response, false)
 }
 
 // Expected args[]
 // [list of students emailIds]
-func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterface, args) sc.Response {
+func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	response := Response{}
 
@@ -349,7 +348,7 @@ func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterfa
 
 	combinedResult := []string{}
 
-	for index, studentEmailId := range args {
+	for _, studentEmailId := range args {
 		if strings.Compare(studentEmailId, "") != 0 {
 			// Query the studentEmailId~uuid index by emailId
 			// This will execute a key range query on all keys starting with 'studentEmailId'
@@ -366,7 +365,7 @@ func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterfa
 				return sendResponse(response, false)
 			}
 			combinedResult = append(combinedResult, result...)
-		}	
+		}
 	}
 
 	fmt.Printf("- queryDimplomaForStudent queryResult:\n%v\n", combinedResult)
@@ -418,7 +417,7 @@ func (s *SmartContract) shareDiploma(APIstub shim.ChaincodeStubInterface, args [
 		return sendResponse(response, false)
 	}
 	nilValue := []byte{0x00}
-	err := APIstub.PutState(emailIdUuidIndexKey, nilValue)
+	err = APIstub.PutState(emailIdUuidIndexKey, nilValue)
 	if err != nil {
 		response.Error = err.Error()
 		return sendResponse(response, false)
