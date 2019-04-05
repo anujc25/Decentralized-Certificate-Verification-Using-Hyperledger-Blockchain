@@ -57,15 +57,16 @@ exports.addDiploma = async function (userName, studentName, studentEmail, issuer
     result = await result.contract.submitTransaction('addDiploma',
       UUID, term, degree, department, studentName, studentEmail, ipfsHash)
 
+    var jsonResult = JSON.parse(result.toString())
     console.log('addDiploma result:', result)
-    return result
+    return jsonResult
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`)
     return ''
   }
 }
 
-exports.queryDiplomaByIssuer = async function (userName, uuid) {
+exports.queryDiplomaByIssuer = async function (userName) {
   try {
     var response = { result: null, error: null }
     var result = await getContract(userName)
@@ -75,6 +76,56 @@ exports.queryDiplomaByIssuer = async function (userName, uuid) {
     }
 
     result = await result.contract.evaluateTransaction('queryDiplomaByIssuer')
+    var jsonResult = JSON.parse(result.toString())
+    console.log('getDiploma1:', jsonResult)
+    var arrDiploma = []
+    for (var i = 0; i < jsonResult.result.length; i++) {
+      arrDiploma.push(JSON.parse(jsonResult.result[i]))
+    }
+    jsonResult.result = arrDiploma
+    console.log('getDiploma2:', jsonResult)
+    return jsonResult
+  } catch (error) {
+    console.error(`Failed to evaluate transaction: ${error}`)
+    return ''
+  }
+}
+
+exports.queryDiplomaForStudent = async function (userName, studentEmail) {
+  try {
+    var response = { result: null, error: null }
+    var result = await getContract(userName)
+    if (result.error) {
+      response.error = result.error
+      return response
+    }
+
+    result = await result.contract.submitTransaction('queryDiplomaForStudent', studentEmail)
+    var jsonResult = JSON.parse(result.toString())
+    console.log('getDiploma1:', jsonResult)
+    var arrDiploma = []
+    for (var i = 0; i < jsonResult.result.length; i++) {
+      arrDiploma.push(JSON.parse(jsonResult.result[i]))
+    }
+    jsonResult.result = arrDiploma
+    console.log('getDiploma2:', jsonResult)
+    return jsonResult
+  } catch (error) {
+    console.error(`Failed to evaluate transaction: ${error}`)
+    return ''
+  }
+}
+
+exports.queryDiplomaForEmployer = async function (userName) {
+  try {
+    var response = { result: null, error: null }
+    var result = await getContract(userName)
+    if (result.error) {
+      response.error = result.error
+      return response
+    }
+
+    result = await result.contract.evaluateTransaction('queryDiplomaForEmployer')
     var jsonResult = JSON.parse(result.toString())
     console.log('getDiploma1:', jsonResult)
     var arrDiploma = []
