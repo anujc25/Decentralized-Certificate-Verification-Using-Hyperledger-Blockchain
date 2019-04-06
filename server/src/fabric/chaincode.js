@@ -100,7 +100,9 @@ exports.queryDiplomaForStudent = async function (userName, studentEmail) {
       return response
     }
 
-    result = await result.contract.submitTransaction('queryDiplomaForStudent', studentEmail)
+    var studentEmailsAsString = studentEmail.join()
+
+    result = await result.contract.submitTransaction('queryDiplomaForStudent', studentEmailsAsString)
     var jsonResult = JSON.parse(result.toString())
     console.log('getDiploma1:', jsonResult)
     var arrDiploma = []
@@ -112,6 +114,26 @@ exports.queryDiplomaForStudent = async function (userName, studentEmail) {
     return jsonResult
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`)
+    return ''
+  }
+}
+
+exports.shareDiplomaWithEmployer = async function (userName, employerEmail, diplomaUuid) {
+  try {
+    var response = { result: null, error: null }
+    var result = await getContract(userName)
+    if (result.error) {
+      response.error = result.error
+      return response
+    }
+
+    result = await result.contract.submitTransaction('shareDiploma', employerEmail, diplomaUuid)
+    
+    var jsonResult = JSON.parse(result.toString())
+    console.log('shareDiploma result:', result)
+    return jsonResult
+  } catch (error) {
+    console.error(`Failed to submit transaction: ${error}`)
     return ''
   }
 }

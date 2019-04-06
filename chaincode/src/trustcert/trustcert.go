@@ -330,10 +330,15 @@ func (s *SmartContract) queryDiplomaForEmployer(APIstub shim.ChaincodeStubInterf
 }
 
 // Expected args[]
-// [list of students emailIds]
+// [comma separated students emailIds]
 func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	response := Response{}
+
+	if len(args) != 1 {
+		response.Error = "Incorrect number of arguments. Expecting 1"
+		return sendResponse(response, false)
+	}
 
 	// RBAC check
 	value, _, err := cid.GetAttributeValue(APIstub, "role")
@@ -346,9 +351,11 @@ func (s *SmartContract) queryDiplomaForStudent(APIstub shim.ChaincodeStubInterfa
 		return sendResponse(response, false)
 	}
 
+	allEmailIds := strings.Split(args[0], ",")
+
 	combinedResult := []string{}
 
-	for _, studentEmailId := range args {
+	for _, studentEmailId := range allEmailIds {
 		if strings.Compare(studentEmailId, "") != 0 {
 			// Query the studentEmailId~uuid index by emailId
 			// This will execute a key range query on all keys starting with 'studentEmailId'
