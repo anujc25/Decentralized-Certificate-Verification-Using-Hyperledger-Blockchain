@@ -8,6 +8,7 @@ var loginRoutes = require('./routes/loginRoutes')
 var universityRoutes = require('./routes/universityRoutes')
 var studentRoutes = require('./routes/studentRoutes')
 var employeeRoutes = require('./routes/employeeRoutes')
+var commonRoutes = require('./routes/commonRoutes')
 
 const app = express()
 app.use(morgan('combined'))
@@ -22,6 +23,7 @@ app.use('/login', loginRoutes)
 app.use('/university', universityRoutes)
 app.use('/student', studentRoutes)
 app.use('/employer', employeeRoutes)
+app.use('/', commonRoutes)
 
 ipfs.startIPFSNode(function () {
   console.log('Starting Node Server ...')

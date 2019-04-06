@@ -14,7 +14,7 @@ exports.uploadDiploma = async function (fileMetadata, file) {
   var response = await chaincode.addDiploma(fileMetadata.issuer, fileMetadata.studentName, fileMetadata.studentEmail,
     fileMetadata.issuer, fileMetadata.term, fileMetadata.degree, fileMetadata.department, uploadStatus.hash)
   console.log('chaincode response: ', response)
-  if (response.Error == '') {
+  if (response.Error === '') {
     return { bSuccess: true, err: null }
   } else {
     return { bSuccess: false, err: response.Error }

@@ -1,11 +1,33 @@
 import React, { Component } from 'react'
+import { save } from 'save-file'
+
 import * as API from '../../../services/getAllDiplomas';
+import * as DiplomaAPI from '../../../services/diplomaService';
+
 class DiplomaList extends Component {
 
     state = { 
         data : { "username" : "z-test-employer-1"},
         allDiplomas :[]
     };
+
+    downloadDiploma = (event) => {
+        console.log(event.currentTarget.innerText)
+        var ipfsHash = event.currentTarget.innerText
+        
+        DiplomaAPI.downloadStudentDiploma(ipfsHash)
+        .then((res) => {
+          console.log(res);
+            if (!res.error && res.result) {
+             save(res.result.data, "diploma.pdf")
+            } else {
+              console.log("Fail to download diploma.")
+            }
+        }).catch((res) => {
+            console.log(res)
+            console.log("Fail to download diploma.")
+        });
+    }
 
     componentDidMount(){
        
@@ -38,13 +60,13 @@ class DiplomaList extends Component {
         if (this.state.allDiplomas && this.state.allDiplomas.length > 0) {
             return this.state.allDiplomas.map((diploma,index)=>{
                 return(
-                        <tr>
+                        <tr key={index}>
                             <td>{diploma.degree}</td>
                             <td>{diploma.department}</td>
                             <td>{diploma.emailId}</td>
                             <td>{diploma.name}</td>
                             <td>{diploma.term}</td>
-                            <td>{diploma.ipfsLink}</td>
+                            <td onClick={this.downloadDiploma}>{diploma.ipfsLink}</td>
                         </tr>           
                 );
             });

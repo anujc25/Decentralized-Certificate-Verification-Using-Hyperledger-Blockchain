@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
-import * as API from '../../../services/certificateUploadService';
+import * as API from '../../../services/diplomaService';
 // import '../../css/offCanvas.css';
 import '../../../css/popup.css';
 
