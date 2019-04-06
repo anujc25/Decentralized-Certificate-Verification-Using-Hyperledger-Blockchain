@@ -20,22 +20,8 @@ class LandingPage extends Component {
       .then((res) => {
         console.log(res);
           if (!res.error && res.result && res.result.role) {
-            switch (res.result.role) {
-              case "STUDENT":
-                this.props.history.push('/homepage/student')  
-                break;
-                case "UNIVERSITY":
-                this.props.history.push('/homepage/university')  
-                break;
-                case "EMPLOYER":
-                this.props.history.push('/homepage/employer')  
-                break;
-            
-              default:
-                this.setState({
-                  loginError: "Login Failed. " + res.error,
-                });
-                break;
+            if (res.result.role != ''){
+              this.props.history.push('/homepage/' + res.result.role)
             }
           } else {
             this.setState({

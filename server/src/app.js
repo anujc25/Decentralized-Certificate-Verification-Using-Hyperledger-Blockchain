@@ -21,7 +21,7 @@ app.use(fileupload())
 app.use('/login', loginRoutes)
 app.use('/university', universityRoutes)
 app.use('/student', studentRoutes)
-app.use('/employee', employeeRoutes)
+app.use('/employer', employeeRoutes)
 
 ipfs.startIPFSNode(function () {
   console.log('Starting Node Server ...')

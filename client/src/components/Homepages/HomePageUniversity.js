@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
 import * as API from '../../services/certificateUploadService';
 import '../../css/offCanvas.css';
-import UniversityAllUploads from './UniversityComponents/UniversityAllUploads';
+import UniversityAllUploads from './UniversityComponents/DiplomaList';
 import UniversityNewUpload from './UniversityComponents/UniversityNewUpload';
 
 class HomePageUniversity extends Component{
@@ -34,7 +34,11 @@ class HomePageUniversity extends Component{
                     </div>
                 </section>
 
-                <UniversityAllUploads/>
+                <div class="media text-muted pt-1">
+                        Issued Diploma
+                </div>
+
+                <UniversityAllUploads role="UNIVERSITY"/>
 
                 {this.state.showUploadDiplomaPopuup ? 
                     <UniversityNewUpload closeUploadPopup={this.togglePopup.bind(this)}/>
