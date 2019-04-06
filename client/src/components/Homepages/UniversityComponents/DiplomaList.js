@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import * as API from '../../../services/getAllDiplomas';
+import {connect} from 'react-redux';
 class DiplomaList extends Component {
 
     state = { 
-        data : { "username" : "z-test-employer-1"},
+        data : { "username" : this.props.userDetail.userName},
         allDiplomas :[]
     };
 
@@ -78,4 +79,10 @@ class DiplomaList extends Component {
     }
 }
 
-export default DiplomaList
+function mapStateToProps(state){
+    return {
+        userDetail: state.userDetail
+    }
+}
+
+export default connect(mapStateToProps)(DiplomaList)
