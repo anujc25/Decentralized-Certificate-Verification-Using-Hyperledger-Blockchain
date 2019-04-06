@@ -11,14 +11,16 @@ class LandingPage extends Component {
   state = {
     loginError: '',
     username: '',
-    secret: ''    
+    secret: '' ,
+    role: 'STUDENT'   
 }
 
   doLogin = (e) => {
 
   var payload = {
       username: this.state.username,
-      secret : this.state.secret
+      secret : this.state.secret,
+      role : this.state.role
   }
 
   API.universityLogin(payload)
@@ -26,7 +28,11 @@ class LandingPage extends Component {
         console.log(res);
         if (!res.error && res.result && res.result.role) {
           if (res.result.role != ''){
-            this.props.SaveUser({userName: this.state.username})
+            var obj = {
+              userName: this.state.username,
+              role: this.state.role
+            }
+            this.props.SaveUser(obj)
             this.props.history.push('/homepage/' + res.result.role)
           }
           else {
@@ -82,6 +88,17 @@ class LandingPage extends Component {
                     }}
                 >
                 </input>
+                <label for="issuer">Role</label>
+                <select name="role" onChange={(event) => {
+                    this.setState({
+                      ...this.state,
+                      role: event.target.value
+                    })
+                }}>
+                  <option value="STUDENT">STUDENT</option>
+                  <option value="UNIVERSITY">UNIVERSITY</option>
+                  <option value="EMPLOYER">EMPLOYER</option>
+                </select>
               </form>
               <p className='lead'>
                 <button type='text' className='btn btn-primary' onClick={() => this.props.history.push('/registeruniversity')}>Register</button>
