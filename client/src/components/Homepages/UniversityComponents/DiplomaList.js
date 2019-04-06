@@ -3,7 +3,7 @@ import * as API from '../../../services/getAllDiplomas';
 class DiplomaList extends Component {
 
     state = { 
-        data : { "username" : "z-test-gape-3"},
+        data : { "username" : "z-test-employer-1"},
         allDiplomas :[]
     };
 
