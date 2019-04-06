@@ -10,8 +10,13 @@ exports.uploadDiploma = async function (fileMetadata, file) {
     return { bSuccess: false, err: uploadStatus.err }
   }
   console.log(fileMetadata)
-  chaincode.addDiploma(fileMetadata.issuer, fileMetadata.studentName, fileMetadata.studentEmail,
+  // TODO: remove fileMetadata.issuer as first argument from chaincode.addDiploma, use session to pass username
+  var response = await chaincode.addDiploma(fileMetadata.issuer, fileMetadata.studentName, fileMetadata.studentEmail,
     fileMetadata.issuer, fileMetadata.term, fileMetadata.degree, fileMetadata.department, uploadStatus.hash)
-
-  return { bSuccess: true, err: null }
+  console.log('chaincode response: ', response)
+  if (response.Error === '') {
+    return { bSuccess: true, err: null }
+  } else {
+    return { bSuccess: false, err: response.Error }
+  }
 }

@@ -21,3 +21,20 @@ export const uploadStudentDiploma = (payload) =>
       console.log('This is error', error)
       return error
     })
+
+export const downloadStudentDiploma = (hash) =>
+  fetch(`${api}/diploma/download/${hash}`, {
+    method: 'GET',
+    headers: {
+      headers
+    //  ...headers,
+    // 'Content-Type': 'multipart/form-data'
+    }
+  })
+    .then(res => res.json())
+    .then(res => {
+      return res
+    }).catch(error => {
+      console.log('This is error', error)
+      return error
+    })

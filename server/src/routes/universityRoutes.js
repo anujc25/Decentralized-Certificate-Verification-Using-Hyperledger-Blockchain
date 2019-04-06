@@ -17,6 +17,7 @@ router.post('/studentdiploma', async function (req, res) {
   }
 })
 
+// TODO: remove username from request route, use session to get username
 router.get('/studentdiploma/:username', async function (req, res) {
   var response = await chaincode.queryDiplomaByIssuer(req.params.username)
 

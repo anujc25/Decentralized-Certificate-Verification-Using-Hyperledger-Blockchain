@@ -24,4 +24,13 @@ exports.uploadFileOnIPFS = async function (fileMetadata, fileObject) {
   }
 }
 
+exports.downloadFileFromIPFS = async function (fileHash) {
+  try {
+    const fileBuffer = await ipfsNode.cat(fileHash)
+    return { result: fileBuffer, error: null }
+  } catch (error) {
+    return { result: null, error: error }
+  }
+}
+
 exports.ipfsNode = ipfsNode

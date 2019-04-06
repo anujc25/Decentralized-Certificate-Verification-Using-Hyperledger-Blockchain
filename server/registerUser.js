@@ -15,14 +15,50 @@ const config = JSON.parse(configJSON)
 var connectionFile = config.connection_file
 var appAdmin = config.appAdmin
 var orgMSPID = config.orgMSPID
-var userName = config.userName
 var gatewayDiscovery = config.gatewayDiscovery
 
 const ccpPath = path.join(process.cwd(), connectionFile)
 const ccpJSON = fs.readFileSync(ccpPath, 'utf8')
 const ccp = JSON.parse(ccpJSON)
 
-console.log('CCP:', ccp)
+var userName = ''
+var userType = ''
+var userEmail = ''
+
+function usage () {
+  console.log('Usage:')
+  console.log('node registerUser.js <UNIVERSITY/EMPLOYER/STUDENT> <username> [<emailId>]')
+}
+
+function validateArgs () {
+  if (process.argv.length < 3) {
+    console.log('Invalid Arguments.')
+    usage()
+    return false
+  }
+
+  if (process.argv[2] === 'UNIVERSITY' || process.argv[2] === 'EMPLOYER' || process.argv[2] === 'STUDENT') {
+    userType = process.argv[2]
+  } else {
+    console.log('Invalid Arguments.')
+    usage()
+    return false
+  }
+  userName = process.argv[3]
+
+  if (userType === 'EMPLOYER' && process.argv.length < 4) {
+    console.log('Invalid Arguments. EmailId required for userType=EMPLOYER')
+    usage()
+    return false
+  }
+  userEmail = process.argv[4]
+
+  return true
+}
+
+if (!validateArgs()) {
+  return
+}
 
 async function main () {
   try {
@@ -54,14 +90,25 @@ async function main () {
     const ca = gateway.getClient().getCertificateAuthority()
     const adminIdentity = gateway.getCurrentIdentity()
 
-    const attr = {
+    var allAttrs = []
+    const attrRole = {
       name: 'role',
-      value: 'UNIVERSITY',
+      value: userType,
       ecert: true
+    }
+    allAttrs.push(attrRole)
+
+    if (userType === 'EMPLOYER'){
+      const attrEmail = {
+        name: 'emailId',
+        value: userEmail,
+        ecert: true
+      }
+      allAttrs.push(attrEmail)
     }
 
     // Register the user, enroll the user, and import the new identity into the wallet.
-    const secret = await ca.register({ affiliation: 'org1', enrollmentID: userName, maxEnrollments: -1, role: 'client', attrs: [attr] }, adminIdentity)
+    const secret = await ca.register({ affiliation: 'org1', enrollmentID: userName, maxEnrollments: -1, role: 'client', attrs: allAttrs }, adminIdentity)
 
     console.log('userName:', userName)
     console.log('secret:', secret)

@@ -1,19 +1,35 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react';
+import { withRouter } from 'react-router-dom'
+import * as API from '../../services/diplomaService';
+import '../../css/offCanvas.css';
+import SharedDiplomaList from './UniversityComponents/DiplomaList';
+import UniversityNewUpload from './UniversityComponents/UniversityNewUpload';
 
-class HomePageEmployer extends Component {
-  render () {
-    return (
-      <div className='container'>
-        <div className='row'>
-          <div className='col-sm' />
-          <div className='col-sm'>
-            <h1> Home Page for Employer</h1>
-          </div>
-          <div class='col-sm' />
-        </div>
-      </div>
-    )
-  }
+class HomePageEmployer extends Component{
+
+    state = {
+        showUploadDiplomaPopuup: false
+    };
+
+    render(){
+        return(
+            <div className="container">
+        
+                <section className="jumbotron text-center">
+                    <div className="container">
+                        <h1 className="jumbotron-heading text-muted">Employer Page</h1>
+                        <p>
+                            <a className="btn btn-primary my-2" onClick={() => this.props.history.push('/')}>Logout</a>
+                        </p>
+                    </div>
+                </section>
+                <div class="media text-muted pt-1">
+                        Diploma shared with me
+                </div>
+                <SharedDiplomaList role="EMPLOYER"/>
+            </div>    
+        );
+    }
 }
 
-export default HomePageEmployer
+export default withRouter(HomePageEmployer);
