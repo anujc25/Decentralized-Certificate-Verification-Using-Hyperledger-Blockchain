@@ -91,7 +91,7 @@ exports.queryDiplomaByIssuer = async function (userName) {
   }
 }
 
-exports.queryDiplomaForStudent = async function (userName, studentEmail) {
+exports.queryDiplomaForStudent = async function (userName, studentEmails) {
   try {
     var response = { result: null, error: null }
     var result = await getContract(userName)
@@ -100,7 +100,7 @@ exports.queryDiplomaForStudent = async function (userName, studentEmail) {
       return response
     }
 
-    var studentEmailsAsString = studentEmail.join()
+    var studentEmailsAsString = studentEmails.join()
 
     result = await result.contract.submitTransaction('queryDiplomaForStudent', studentEmailsAsString)
     var jsonResult = JSON.parse(result.toString())
