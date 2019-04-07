@@ -41,6 +41,7 @@ public class StudentController {
 
 
 
+
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
         return repository.save(newStudent);
     }
