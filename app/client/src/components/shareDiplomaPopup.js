@@ -20,17 +20,16 @@ class ShareDiplomaPopup extends Component{
         API.shareStudentDiploma(payload)
         .then((res) => {
             console.log(res);
-            if (!res.error && res.result) {
-                this.setState({
-                    ...this.state,
-                    shareResult: "Share Success. " + res.result,
-                });            
-            } else {
-                this.setState({
-                    ...this.state,
-                    shareResult: "Share Failed. " + res.error,
-                });            
-            }
+            this.setState({
+                ...this.state,
+                shareResult: res.Status
+            }); 
+        })
+        .catch((res) => {
+            console.log(res)
+            this.setState({
+                message: res.Status,
+            });   
         });
     }
 

@@ -21,9 +21,9 @@ router.post('/diploma/share/:username', async function (req, res) {
   var response = await chaincode.shareDiplomaWithEmployer(req.params.username, req.body.employerEmail, req.body.diplomaUuid)
   console.log("/student/diploma/share response: ", response.result)
   if (response.Error === '') {
-    res.status(200).send(response.result)
+    res.status(200).send({ Status: 'Diploma successfully shared with the employer.' })
   } else {
-    res.status(500).send(response.result)
+    res.status(500).send({ Status: 'Diploma sharing failed:' + response.Error })
   }
 })
 
