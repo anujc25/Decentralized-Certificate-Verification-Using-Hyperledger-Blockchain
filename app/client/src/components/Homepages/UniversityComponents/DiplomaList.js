@@ -4,13 +4,22 @@ import { save } from 'save-file'
 import * as API from '../../../services/getAllDiplomas';
 import * as DiplomaAPI from '../../../services/diplomaService';
 import {connect} from 'react-redux';
+import ShareDiplomaPopup from '../../shareDiplomaPopup'
 
 class DiplomaList extends Component {
 
     state = { 
         data : { "username" : this.props.userDetail.userName},
+        showUploadDiplomaPopuup : false,
+        uuid : "",
         allDiplomas :[]
     };
+
+    togglePopup() {
+        this.setState({
+            showUploadDiplomaPopuup: !this.state.showUploadDiplomaPopuup
+        });
+    }
 
     downloadDiploma = (event) => {
         console.log(event.currentTarget.innerText)
@@ -68,6 +77,19 @@ class DiplomaList extends Component {
                             <td>{diploma.name}</td>
                             <td>{diploma.term}</td>
                             <td onClick={this.downloadDiploma}>{diploma.ipfsLink}</td>
+                            {
+                                this.props.role == "STUDENT" ? 
+                                <td>
+                                    <button className="btn btn-primary my-2" onClick={()=>{
+                                        this.setState({
+                                            ...this.state,
+                                            showUploadDiplomaPopuup: !this.state.showUploadDiplomaPopuup,
+                                            uuid: diploma.diplomaUUID
+                                        })
+                                    }}
+                                    >Share</button>
+                                </td> : null
+                            }   
                         </tr>           
                 );
             });
@@ -88,6 +110,9 @@ class DiplomaList extends Component {
                                     <th>name</th>
                                     <th>term</th>
                                     <th>ipfsLink</th>
+                                    {
+                                        this.props.role == "STUDENT" ? <th>Share</th> : null
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,6 +121,10 @@ class DiplomaList extends Component {
                         </table>
                     </div>
                 </div>
+                {this.state.showUploadDiplomaPopuup ? 
+                    <ShareDiplomaPopup closeUploadPopup={this.togglePopup.bind(this)} uuid = {this.state.uuid}/>
+                    : null
+                }
             </div>
         )
     }

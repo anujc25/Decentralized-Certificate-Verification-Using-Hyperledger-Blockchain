@@ -130,7 +130,7 @@ exports.shareDiplomaWithEmployer = async function (userName, employerEmail, dipl
     result = await result.contract.submitTransaction('shareDiploma', employerEmail, diplomaUuid)
     
     var jsonResult = JSON.parse(result.toString())
-    console.log('shareDiploma result:', result)
+    console.log('shareDiploma result:', jsonResult)
     return jsonResult
   } catch (error) {
     console.error(`Failed to submit transaction: ${error}`)
