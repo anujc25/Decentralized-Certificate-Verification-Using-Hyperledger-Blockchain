@@ -1,12 +1,10 @@
 package com.trustcert.controller;
 
-
 import com.trustcert.exceptions.IllegalStudentException;
 import com.trustcert.model.StudentDetailModel;
 import com.trustcert.model.StudentModel;
 import com.trustcert.repository.StudentRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import lombok.Data;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Serializable;
 import java.util.List;
 
 @RestController
@@ -23,6 +22,11 @@ public class StudentController {
 
     StudentController(StudentRepository repository) {
         this.repository = repository;
+    }
+
+    @GetMapping("/students")
+    List<StudentModel> retrieveAllStudents(){
+        return repository.findAll();
     }
 
     @PostMapping("/students")
@@ -36,9 +40,9 @@ public class StudentController {
     @GetMapping("/students/{email}")
     StudentModel findStudentByEmail(@PathVariable String email) {
 
-        StudentModel student = repository.findByStudentEmail(email);
+        StudentModel student = repository.findByStudentPrimaryEmail(email);
         if (student == null){
-            throw new IllegalStudentException(email);
+            throw new IllegalStudentException("Cannot find student with email: "+ email);
         }
         return student;
     }
@@ -51,29 +55,42 @@ public class StudentController {
                     student.setStudentFirstName(newStudent.getStudentFirstName());
                     student.setStudentLastName(newStudent.getStudentLastName());
                     student.setPassword(newStudent.getPassword());
+                    student.setVerified(newStudent.getVerified());
                     return repository.save(student);
                 })
-                .orElseThrow(() -> new IllegalStudentException(email));
+                .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
     }
 
+//    @PutMapping("/students/{email}")
+//    StudentModel addStudentSecondaryEmail(@RequestBody List<String> emails, @PathVariable String email) {
+//
+//        return repository.findById(email)
+//                .map(student -> {
+//                    for(String secondaryEmail: emails){
+//                        student.addSecondaryStudentEmail(email);
+//                    }
+//                    return repository.save(student);
+//                })
+//                .orElseThrow(() -> new IllegalStudentException(email));
+//    }
     @PostMapping("/student/login")
-    LoginResponse authenticateStudent(@RequestBody String email, @RequestBody String password) {
+    LoginResponse authenticateStudent(@RequestBody StudentModel model) {
 
-        StudentModel student = repository.findByStudentEmail(email);
+        StudentModel student = repository.findByStudentPrimaryEmail(model.getStudentPrimaryEmail());
         if (student == null){
-            throw new IllegalStudentException("Cannot find student with email: "+email);
+            throw new IllegalStudentException("Cannot find student with email: "+model.getStudentPrimaryEmail());
         }
         if (student.getVerified() == Boolean.FALSE){
-            throw new IllegalStudentException("Student with email: " + email + " is not verified.");
+            throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
         }
-        if (!student.getPassword().equals(password)){
+        if (!student.getPassword().equals(model.getPassword())){
             throw new IllegalStudentException("Incorrect password entered.");
         }
         LoginResponse loginResponse = new LoginResponse(student.getStudentPrimaryEmail(), student.getSecret(),student.getSecondaryAccountDetails());
         return loginResponse;
     }
-
-    private static class LoginResponse{
+    @Data
+    private static class LoginResponse implements Serializable {
         String studentPrimaryEmail;
         String secret;
         List<StudentDetailModel> secondaryAccountDetails;
@@ -81,7 +98,9 @@ public class StudentController {
         LoginResponse(String studentPrimaryEmail, String secret, List<StudentDetailModel> list){
             this.studentPrimaryEmail = studentPrimaryEmail;
             this.secret = secret;
-            this.secondaryAccountDetails.addAll(list);
+            if(list != null) {
+                this.secondaryAccountDetails.addAll(list);
+            }
         }
     }
 }

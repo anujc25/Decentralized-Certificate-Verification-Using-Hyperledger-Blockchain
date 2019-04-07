@@ -78,6 +78,10 @@ public class StudentModel implements Serializable {
         this.secondaryAccountDetails = secondaryAccountDetails;
     }
 
+    public void addSecondaryStudentEmail(String email){
+        this.secondaryAccountDetails.add(new StudentDetailModel(email));
+    }
+
     public Boolean getVerified() {
         return isVerified;
     }
