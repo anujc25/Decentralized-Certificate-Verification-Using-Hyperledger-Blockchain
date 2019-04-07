@@ -36,7 +36,7 @@ public class StudentController {
         return repository.save(newStudent);
     }
 
-    // Single item
+    // Single student
     @GetMapping("/students/{email}")
     StudentModel findStudentByEmail(@PathVariable String email) {
 
@@ -61,18 +61,6 @@ public class StudentController {
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
     }
 
-//    @PutMapping("/students/{email}")
-//    StudentModel addStudentSecondaryEmail(@RequestBody List<String> emails, @PathVariable String email) {
-//
-//        return repository.findById(email)
-//                .map(student -> {
-//                    for(String secondaryEmail: emails){
-//                        student.addSecondaryStudentEmail(email);
-//                    }
-//                    return repository.save(student);
-//                })
-//                .orElseThrow(() -> new IllegalStudentException(email));
-//    }
     @PostMapping("/student/login")
     LoginResponse authenticateStudent(@RequestBody StudentModel model) {
 
