@@ -1,5 +1,6 @@
 package com.trustcert.model;
 
+import com.trustcert.utility.PasswordEncoderBean;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;

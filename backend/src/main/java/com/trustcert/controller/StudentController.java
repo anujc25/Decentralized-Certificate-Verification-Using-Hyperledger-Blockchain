@@ -4,6 +4,7 @@ import com.trustcert.exceptions.IllegalStudentException;
 import com.trustcert.model.StudentDetailModel;
 import com.trustcert.model.StudentModel;
 import com.trustcert.repository.StudentRepository;
+import com.trustcert.utility.PasswordEncoderBean;
 import lombok.Data;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,8 @@ public class StudentController {
     StudentModel addStudent(@RequestBody StudentModel newStudent) {
 
         //TODO: Register User Call Node sdk to do it.
+
+        newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
         return repository.save(newStudent);
     }
 
@@ -54,14 +57,14 @@ public class StudentController {
                 .map(student -> {
                     student.setStudentFirstName(newStudent.getStudentFirstName());
                     student.setStudentLastName(newStudent.getStudentLastName());
-                    student.setPassword(newStudent.getPassword());
+//                    student.setPassword(newStudent.getPassword());
                     student.setVerified(newStudent.getVerified());
                     return repository.save(student);
                 })
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
     }
 
-    @PostMapping("/student/login")
+    @PostMapping("/students/login")
     LoginResponse authenticateStudent(@RequestBody StudentModel model) {
 
         StudentModel student = repository.findByStudentPrimaryEmail(model.getStudentPrimaryEmail());
@@ -71,7 +74,10 @@ public class StudentController {
         if (student.getVerified() == Boolean.FALSE){
             throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
         }
-        if (!student.getPassword().equals(model.getPassword())){
+        System.out.println(model.getPassword());
+        System.out.println(student.getPassword());
+        System.out.println(PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),student.getPassword()));
+        if (!PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),student.getPassword())){
             throw new IllegalStudentException("Incorrect password entered.");
         }
         LoginResponse loginResponse = new LoginResponse(student.getStudentPrimaryEmail(), student.getSecret(),student.getSecondaryAccountDetails());
