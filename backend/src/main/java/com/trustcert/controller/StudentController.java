@@ -1,6 +1,8 @@
 package com.trustcert.controller;
 
+import com.trustcert.exceptions.AuthenticationException;
 import com.trustcert.exceptions.IllegalStudentException;
+import com.trustcert.model.PasswordModel;
 import com.trustcert.model.StudentDetailModel;
 import com.trustcert.model.StudentModel;
 import com.trustcert.repository.StudentRepository;
@@ -64,6 +66,22 @@ public class StudentController {
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
     }
 
+    @PutMapping("/students/{email}/passwordchange")
+    StudentModel updatePassword(@RequestBody PasswordModel passwordModel, @PathVariable String email) {
+
+        return repository.findById(email)
+                .map(student -> {
+                    if (PasswordEncoderBean.passwordEncoder().matches(passwordModel.getCurrentPassword(),student.getPassword())){
+                        student.setPassword(PasswordEncoderBean.passwordEncoder().encode(passwordModel.getNewPassword()));
+                        return repository.save(student);
+                    }
+                    else {
+                        throw new AuthenticationException("Incorrect current password entered. Not authorized.");
+                    }
+                })
+                .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
+    }
+
     @PostMapping("/students/login")
     LoginResponse authenticateStudent(@RequestBody StudentModel model) {
 
@@ -74,11 +92,8 @@ public class StudentController {
         if (student.getVerified() == Boolean.FALSE){
             throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
         }
-        System.out.println(model.getPassword());
-        System.out.println(student.getPassword());
-        System.out.println(PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),student.getPassword()));
         if (!PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),student.getPassword())){
-            throw new IllegalStudentException("Incorrect password entered.");
+            throw new AuthenticationException("Incorrect password entered. Cannot authenticate.");
         }
         LoginResponse loginResponse = new LoginResponse(student.getStudentPrimaryEmail(), student.getSecret(),student.getSecondaryAccountDetails());
         return loginResponse;

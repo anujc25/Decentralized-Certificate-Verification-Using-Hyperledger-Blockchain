@@ -1,6 +1,8 @@
 package com.trustcert.controller;
 
+import com.trustcert.exceptions.AuthenticationException;
 import com.trustcert.exceptions.IllegalVerifierException;
+import com.trustcert.model.PasswordModel;
 import com.trustcert.model.VerifierModel;
 import com.trustcert.repository.VerifierRepository;
 import com.trustcert.utility.PasswordEncoderBean;
@@ -57,6 +59,22 @@ public class VerifierController {
                 .orElseThrow(() -> new IllegalVerifierException("Cannot find verifier with email: "+ email));
     }
 
+    @PutMapping("/verifiers/{email}/passwordchange")
+    VerifierModel updatePassword(@RequestBody PasswordModel passwordModel, @PathVariable String email) {
+
+        return repository.findById(email)
+                .map(verifier -> {
+                    if (PasswordEncoderBean.passwordEncoder().matches(passwordModel.getCurrentPassword(),verifier.getPassword())){
+                        verifier.setPassword(PasswordEncoderBean.passwordEncoder().encode(passwordModel.getNewPassword()));
+                        return repository.save(verifier);
+                    }
+                    else {
+                        throw new AuthenticationException("Incorrect current password entered. Not authorized.");
+                    }
+                })
+                .orElseThrow(() -> new IllegalVerifierException("Cannot find verifier with email: "+ email));
+    }
+
     @PostMapping("/verifiers/login")
     LoginResponse authenticateEmployer(@RequestBody VerifierModel model) {
 
@@ -73,6 +91,7 @@ public class VerifierController {
         LoginResponse loginResponse = new LoginResponse(verifier.getVerifierEmail(), verifier.getSecret());
         return loginResponse;
     }
+    
     @Data
     private static class LoginResponse implements Serializable {
         String verifierPrimaryEmail;
