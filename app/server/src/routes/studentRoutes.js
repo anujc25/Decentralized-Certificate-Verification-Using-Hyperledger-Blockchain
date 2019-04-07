@@ -19,7 +19,7 @@ router.get('/diploma/:username/:studentemail', async function (req, res) {
 // TODO: remove username from request route, use session to get username
 router.post('/diploma/share/:username', async function (req, res) {
   var response = await chaincode.shareDiplomaWithEmployer(req.params.username, req.body.employerEmail, req.body.diplomaUuid)
-
+  console.log("/student/diploma/share response: ", response.result)
   if (response.Error === '') {
     res.status(200).send(response.result)
   } else {

@@ -38,3 +38,20 @@ export const downloadStudentDiploma = (hash) =>
       console.log('This is error', error)
       return error
     })
+
+export const shareStudentDiploma = (payload) =>
+    fetch(`${api}/student/diploma/share/` + payload.username, {
+      method: 'POST',
+      headers: { 
+         ...headers,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(res => {
+        return res
+      }).catch(error => {
+        console.log('This is error', error)
+        return error
+      })
