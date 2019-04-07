@@ -91,7 +91,7 @@ public class VerifierController {
         LoginResponse loginResponse = new LoginResponse(verifier.getVerifierEmail(), verifier.getSecret());
         return loginResponse;
     }
-    
+
     @Data
     private static class LoginResponse implements Serializable {
         String verifierPrimaryEmail;

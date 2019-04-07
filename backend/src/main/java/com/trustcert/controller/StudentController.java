@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class StudentController {
@@ -36,6 +37,9 @@ public class StudentController {
     StudentModel addStudent(@RequestBody StudentModel newStudent) {
 
         //TODO: Register User Call Node sdk to do it.
+
+
+
 
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
         return repository.save(newStudent);
@@ -57,10 +61,28 @@ public class StudentController {
 
         return repository.findById(email)
                 .map(student -> {
-                    student.setStudentFirstName(newStudent.getStudentFirstName());
-                    student.setStudentLastName(newStudent.getStudentLastName());
-//                    student.setPassword(newStudent.getPassword());
-                    student.setVerified(newStudent.getVerified());
+                    if (newStudent.getStudentFirstName()!=null){
+                        student.setStudentFirstName(newStudent.getStudentFirstName());
+                    }
+                    if (newStudent.getStudentLastName()!=null){
+                        student.setStudentLastName(newStudent.getStudentLastName());
+                    }
+                    if (newStudent.getVerified().equals(Boolean.TRUE)){
+                        student.setVerified(newStudent.getVerified());
+                    }
+                    if (newStudent.getSecondaryAccountDetails()!=null && newStudent.getSecondaryAccountDetails().size()!=0){
+
+                        if (student.getSecondaryAccountDetails()==null){
+                            student.getSecondaryAccountDetails().addAll(newStudent.getSecondaryAccountDetails());
+                        }
+                        else {
+                            for(StudentDetailModel sd: newStudent.getSecondaryAccountDetails()){
+                                if (!student.getSecondaryAccountDetails().contains(sd)){
+                                    student.getSecondaryAccountDetails().add(sd);
+                                }
+                            }
+                        }
+                    }
                     return repository.save(student);
                 })
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
@@ -98,17 +120,18 @@ public class StudentController {
         LoginResponse loginResponse = new LoginResponse(student.getStudentPrimaryEmail(), student.getSecret(),student.getSecondaryAccountDetails());
         return loginResponse;
     }
+
     @Data
     private static class LoginResponse implements Serializable {
         String studentPrimaryEmail;
         String secret;
-        List<StudentDetailModel> secondaryAccountDetails;
+        Set<StudentDetailModel> secondaryAccountDetails;
 
-        LoginResponse(String studentPrimaryEmail, String secret, List<StudentDetailModel> list){
+        LoginResponse(String studentPrimaryEmail, String secret, Set<StudentDetailModel> set){
             this.studentPrimaryEmail = studentPrimaryEmail;
             this.secret = secret;
-            if(list != null) {
-                this.secondaryAccountDetails.addAll(list);
+            if(set != null) {
+                this.secondaryAccountDetails.addAll(set);
             }
         }
     }

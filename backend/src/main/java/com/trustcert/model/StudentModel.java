@@ -1,12 +1,11 @@
 package com.trustcert.model;
 
-import com.trustcert.utility.PasswordEncoderBean;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class StudentModel implements Serializable {
@@ -19,7 +18,7 @@ public class StudentModel implements Serializable {
 
     private String secret;
 
-    private List<StudentDetailModel> secondaryAccountDetails;
+    private Set<StudentDetailModel> secondaryAccountDetails;
 
     private Boolean isVerified = Boolean.FALSE;
 
@@ -71,11 +70,11 @@ public class StudentModel implements Serializable {
         this.secret = secret;
     }
 
-    public List<StudentDetailModel> getSecondaryAccountDetails() {
+    public Set<StudentDetailModel> getSecondaryAccountDetails() {
         return secondaryAccountDetails;
     }
 
-    public void setSecondaryAccountDetails(List<StudentDetailModel> secondaryAccountDetails) {
+    public void setSecondaryAccountDetails(Set<StudentDetailModel> secondaryAccountDetails) {
         this.secondaryAccountDetails = secondaryAccountDetails;
     }
 
