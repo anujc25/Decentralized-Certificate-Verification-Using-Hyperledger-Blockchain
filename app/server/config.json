@@ -1,9 +1,9 @@
 {
     "connection_file": "connection.json",
-    "appAdmin": "z-app-admin",
-    "appAdminSecret": "z-app-adminpw",
+    "appAdmin": "admin",
+    "appAdminSecret": "adminpw",
     "orgMSPID": "org1msp",
-    "caName": "173.193.75.36:30839",
+    "caName": "173.193.79.36:31966",
     "userName": "z-test-gape-3",
     "gatewayDiscovery": { "enabled": true, "asLocalhost": false },
     "chaincodeName" : "trustcert",
