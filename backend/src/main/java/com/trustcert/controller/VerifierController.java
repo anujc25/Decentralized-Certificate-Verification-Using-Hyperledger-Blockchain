@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class VerifierController {
 
     private final VerifierRepository repository;

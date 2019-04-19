@@ -1,16 +1,34 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
 import * as API from '../services/diplomaService';
+import * as BackendAPI from '../services/backendAPI';
 // import '../../css/offCanvas.css';
 import '../css/popup.css';
+import {connect} from 'react-redux';
 
 class UniversityNewUpload extends Component{
    state = {
-        emailId: ''
+        'username': this.props.userDetail.userName,
+        'emailId': '',
+        'message':''
     };
 
     onSubmit = (e) => {
-        e.preventDefault();
+        e.preventDefault()
+
+        var payload = {
+            'studentPrimaryEmail': this.state.username,
+            'studentSecondaryEmail': this.state.emailId
+        }
+
+        BackendAPI.addStudentEmailId(payload).then((res) =>{
+            if (res.status == 200) {
+                this.setState({
+                    ...this.state,
+                    message: 'Email-id successfully added. Please check your inbox.'
+                })
+            }
+        })
     }
 
     render(){
@@ -56,4 +74,10 @@ class UniversityNewUpload extends Component{
     }
 }
 
-export default withRouter(UniversityNewUpload);
+function mapStateToProps(state){
+    return {
+        userDetail: state.userDetail
+    }
+}
+
+export default withRouter(connect(mapStateToProps)(UniversityNewUpload));

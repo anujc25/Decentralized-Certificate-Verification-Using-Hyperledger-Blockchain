@@ -8,6 +8,8 @@ import com.trustcert.model.StudentModel;
 import com.trustcert.repository.StudentRepository;
 import com.trustcert.utility.PasswordEncoderBean;
 import lombok.Data;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONObject;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class StudentController {
 
     private final StudentRepository repository;
@@ -65,10 +69,7 @@ public class StudentController {
         }
 
         Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
-
-        StudentDetailModel sd = new StudentDetailModel(studentSecondaryEmail);
-        studentEmails.add(sd);
-        student.setSecondaryAccountDetails(studentEmails);
+        student.addSecondaryStudentEmail(studentSecondaryEmail);
 
         return repository.save(student);
     }
@@ -84,9 +85,10 @@ public class StudentController {
         Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
 
         // remove emails that are not verified
-        for (StudentDetailModel sd : studentEmails) {
+        for (Iterator<StudentDetailModel> i = studentEmails.iterator(); i.hasNext();) {
+            StudentDetailModel sd = i.next();
             if (!sd.getIsVerified()) {
-                studentEmails.remove(sd);
+                i.remove();
             }
         }
 

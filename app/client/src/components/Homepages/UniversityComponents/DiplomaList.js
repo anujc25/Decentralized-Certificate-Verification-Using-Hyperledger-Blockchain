@@ -3,6 +3,7 @@ import { save } from 'save-file'
 
 import * as API from '../../../services/getAllDiplomas';
 import * as DiplomaAPI from '../../../services/diplomaService';
+import * as BackendAPI from '../../../services/backendAPI';
 import {connect} from 'react-redux';
 import ShareDiplomaPopup from '../../shareDiplomaPopup'
 
@@ -10,6 +11,7 @@ class DiplomaList extends Component {
 
     state = { 
         data : { "username" : this.props.userDetail.userName},
+        emailIds : "",
         showUploadDiplomaPopuup : false,
         uuid : "",
         allDiplomas :[]
@@ -50,10 +52,31 @@ class DiplomaList extends Component {
         }
 
         else if (this.props.role == "STUDENT") {
-            API.allStudentDiplomas(this.state.data).then((res) =>{
+
+            BackendAPI.allStudentEmailIds(this.state.data).then((res) =>{
+                var studentEmailIds = ""
+
+                if (res && res.length > 0) {
+                    res.map((e) => {
+                        studentEmailIds += e.email
+                        studentEmailIds += ","
+                    })
+                }
+
                 this.setState({
-                    allDiplomas : res
+                    ...this.state,
+                    emailIds : studentEmailIds
+                }, () => {
+                var payload = {
+                    username: this.state.data.username,
+                    emailIds: this.state.emailIds
+                }
+                API.allStudentDiplomas(payload).then((res) =>{
+                    this.setState({
+                        allDiplomas : res
+                    })
                 })
+            })
             })
         }
         

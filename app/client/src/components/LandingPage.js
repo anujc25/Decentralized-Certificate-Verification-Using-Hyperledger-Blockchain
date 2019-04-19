@@ -65,8 +65,7 @@ class LandingPage extends Component {
 
           <div className='cover-container'>
             <main role='main' className='inner cover'>
-              <h1 className='cover-heading'>Welcome to the Vericert Application</h1>
-              <p className='lead'>Please click on Register if signing in for the first time</p>
+              <h1 className='cover-heading'>TrustCert</h1>
               <form encType="multipart/form-data" onSubmit={this.onSubmit}>
                 <label for="issuer">Username</label>
                 <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Username"

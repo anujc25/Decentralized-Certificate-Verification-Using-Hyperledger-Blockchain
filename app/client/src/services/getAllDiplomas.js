@@ -21,7 +21,7 @@ export const allUniversityDiplomas = (payload) =>
     })
 
 export const allStudentDiplomas = (payload) =>
-  fetch(`${api}/student/diploma/` + payload.username, {
+  fetch(`${api}/student/diploma/` + payload.username + `/` + payload.emailIds, {
     method: 'GET',
     headers: {
       ...headers,
