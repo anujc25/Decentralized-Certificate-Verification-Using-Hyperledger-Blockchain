@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import org.json.JSONObject;
 
 @RestController
 public class StudentController {
@@ -38,12 +41,56 @@ public class StudentController {
 
         //TODO: Register User Call Node sdk to do it.
 
-
-
-
+        // Adding primary email-id in details while student registers
+        // This will be required when we want to fetch all the email-ids of the student
+        StudentDetailModel sd = new StudentDetailModel(newStudent.getStudentPrimaryEmail());
+        Set<StudentDetailModel> s = new HashSet<>();
+        s.add(sd);
+        newStudent.setSecondaryAccountDetails(s);
 
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
         return repository.save(newStudent);
+    }
+
+    @PostMapping("/students/email")
+    StudentModel addStudentEmailId(@RequestBody Map<String, Object> payload) {
+
+        JSONObject jsonObject = new JSONObject(payload);
+        String studentPrimaryEmail = jsonObject.getString("studentPrimaryEmail");
+        String studentSecondaryEmail = jsonObject.getString("studentSecondaryEmail");
+
+        StudentModel student = repository.findByStudentPrimaryEmail(studentPrimaryEmail);
+        if (student == null){
+            throw new IllegalStudentException("Cannot find student with email: "+ studentPrimaryEmail);
+        }
+
+        Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
+
+        StudentDetailModel sd = new StudentDetailModel(studentSecondaryEmail);
+        studentEmails.add(sd);
+        student.setSecondaryAccountDetails(studentEmails);
+
+        return repository.save(student);
+    }
+
+    @GetMapping("/students/email/{studentPrimaryEmail}")
+    Set<StudentDetailModel> getStudentEmailId(@PathVariable String studentPrimaryEmail) {
+
+        StudentModel student = repository.findByStudentPrimaryEmail(studentPrimaryEmail);
+        if (student == null){
+            throw new IllegalStudentException("Cannot find student with email: "+ studentPrimaryEmail);
+        }
+
+        Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
+
+        // remove emails that are not verified
+        for (StudentDetailModel sd : studentEmails) {
+            if (!sd.getIsVerified()) {
+                studentEmails.remove(sd);
+            }
+        }
+
+        return studentEmails;
     }
 
     // Single student

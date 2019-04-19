@@ -23,3 +23,17 @@ Functionalities available for verifiers:
 To build and run use following command:
 
     ./mvnw clean spring-boot:run
+
+Sample document:
+
+```
+{
+        "studentPrimaryEmail": "zteststudent@gmail.com",
+        "studentFirstName": "Mac",
+        "studentLastName": "Mohan",
+        "password": "$2a$10$D9RWcYP5pYnbQ2JA88wDwe.gJ5Qaz1TDgpP/ukYm2BLJ/iahv5ZBi",
+        "secret": "DSFGSF12A65SF4AF1CS1C65AF1",
+        "secondaryAccountDetails": null,
+        "isVerified": true
+}
+```

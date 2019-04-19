@@ -6,10 +6,19 @@ import lombok.Data;
 public class StudentDetailModel {
 
     private String email;
-    private Boolean isVerified = Boolean.FALSE;
+    // TODO : make isVerified false once verification email implementation is in place
+    private Boolean isVerified = Boolean.TRUE;
 
-    StudentDetailModel(String email){
+    public StudentDetailModel(String email){
         this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Boolean getIsVerified() {
+        return isVerified;
     }
 
 }
