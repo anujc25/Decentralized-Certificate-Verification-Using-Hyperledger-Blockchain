@@ -9,6 +9,7 @@ import com.trustcert.repository.StudentRepository;
 import com.trustcert.utility.PasswordEncoderBean;
 import lombok.Data;
 
+import org.springframework.data.mongodb.core.aggregation.BooleanOperators.BooleanOperatorFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,11 +19,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.crypto.Cipher;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.json.JSONObject;
 
 @RestController
@@ -52,6 +73,8 @@ public class StudentController {
         s.add(sd);
         newStudent.setSecondaryAccountDetails(s);
 
+        sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
+
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
         return repository.save(newStudent);
     }
@@ -71,6 +94,7 @@ public class StudentController {
         Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
         student.addSecondaryStudentEmail(studentSecondaryEmail);
 
+        sendVerificationEmail(studentPrimaryEmail, studentSecondaryEmail);
         return repository.save(student);
     }
 
@@ -138,6 +162,40 @@ public class StudentController {
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
     }
 
+    @GetMapping("/students/verify/{encryptedIds}")
+    StudentModel verifyStudentEmailId(@PathVariable String encryptedIds) {
+        try {
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] decodedByteArray = decoder.decode(encryptedIds);
+            String ids = new String(decodedByteArray);
+            
+            String primaryEmailId = ids.split(Pattern.quote("/"))[0];
+            String secondaryEmailId = ids.split(Pattern.quote("/"))[1];
+
+            StudentModel student = repository.findByStudentPrimaryEmail(primaryEmailId);
+            if (student == null){
+                throw new IllegalStudentException("Cannot find student with email: "+ primaryEmailId);
+            }
+            
+            Set<StudentDetailModel> s = student.getSecondaryAccountDetails();
+            // verify the matching emailId
+            for (Iterator<StudentDetailModel> i = s.iterator(); i.hasNext();) {
+                StudentDetailModel sd = i.next();
+                if (sd.getEmail().equals(secondaryEmailId)) {
+                    sd.setIsVerified(true);
+                    break;
+                }
+            }
+
+            student.setSecondaryAccountDetails(s);
+
+            return repository.save(student);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     @PutMapping("/students/{email}/passwordchange")
     StudentModel updatePassword(@RequestBody PasswordModel passwordModel, @PathVariable String email) {
 
@@ -183,6 +241,56 @@ public class StudentController {
             if(set != null) {
                 this.secondaryAccountDetails.addAll(set);
             }
+        }
+    }
+
+    private Boolean sendVerificationEmail(String primaryEmail, String secondaryEmail) {
+        final String senderUsername = "project.trustcert@gmail.com";
+        final String senderPassword = ""; // Add the password for sender email-id
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props,
+            new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(senderUsername, senderPassword);
+                }
+            });
+
+        try {
+            String ids = primaryEmail + "/" + secondaryEmail;
+            Base64.Encoder encoder = Base64.getEncoder();
+            String encodedIds = encoder.encodeToString(
+                    ids.getBytes(StandardCharsets.UTF_8) );
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(senderUsername));
+            message.setRecipients(Message.RecipientType.TO,
+                // InternetAddress.parse(secondaryEmail));
+                InternetAddress.parse(secondaryEmail));
+            message.setSubject("TrustCert - Verify your Email Address");
+            message.setText( "Hello, " +  System.lineSeparator() + System.lineSeparator() + 
+                "Thank you for taking the first step towards securing your certificates." + System.lineSeparator() + 
+                "Please verify your email address by clicking the link below."+ System.lineSeparator() +  
+                "http://localhost:8080/students/verify/"+ encodedIds +  System.lineSeparator() + System.lineSeparator() +
+                "Regards," + System.lineSeparator() + 
+                "Team TrustCert"
+            );
+
+
+            System.out.println("Done");
+            Transport.send(message);
+
+            System.out.println("Sent message successfully....");
+            return true;
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
         }
     }
 }
