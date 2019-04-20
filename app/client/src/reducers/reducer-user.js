@@ -1,9 +1,10 @@
-import {SAVE_USER} from '../actions/actions';
+import {SAVE_USER, SAVE_EMAILIDS} from '../actions/actions';
 
 const initialState = {
     userName: '',
     role: '',
-    isLoggedIn: false
+    isLoggedIn: false,
+    emailIds: ''
 };
 
 
@@ -14,7 +15,18 @@ const user = (state = initialState, action) => {
             state = {
                 userName: action.obj.userName,
                 role: action.obj.role,
-                isLoggedIn: true
+                isLoggedIn: true,
+                emailIds: state.emailIds
+            };
+            console.log(state);
+            return state;
+
+        case SAVE_EMAILIDS :
+            //return Object.assign({}, state, 
+            state = {
+                userName: state.userName,
+                role: state.role,
+                emailIds: action.obj.emailIds
             };
             console.log(state);
             return state;

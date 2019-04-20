@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { save } from 'save-file'
-
+import {bindActionCreators} from 'redux'
 import * as API from '../../../services/getAllDiplomas';
 import * as DiplomaAPI from '../../../services/diplomaService';
 import * as BackendAPI from '../../../services/backendAPI';
 import {connect} from 'react-redux';
 import ShareDiplomaPopup from '../../shareDiplomaPopup'
+import {SaveEmailIds} from '../../../actions/actions'
 
 class DiplomaList extends Component {
 
@@ -53,30 +54,40 @@ class DiplomaList extends Component {
 
         else if (this.props.role == "STUDENT") {
 
+            // get student emailIds
             BackendAPI.allStudentEmailIds(this.state.data).then((res) =>{
                 var studentEmailIds = ""
+                var ids = []
 
                 if (res && res.length > 0) {
                     res.map((e) => {
+                        ids.push(e.email)
                         studentEmailIds += e.email
                         studentEmailIds += ","
                     })
                 }
 
+                // get diploma for emailIds
                 this.setState({
                     ...this.state,
                     emailIds : studentEmailIds
                 }, () => {
-                var payload = {
-                    username: this.state.data.username,
-                    emailIds: this.state.emailIds
-                }
-                API.allStudentDiplomas(payload).then((res) =>{
-                    this.setState({
-                        allDiplomas : res
+                    var payload = {
+                        username: this.state.data.username,
+                        emailIds: this.state.emailIds
+                    }
+                    API.allStudentDiplomas(payload).then((res) =>{
+                        this.setState({
+                            allDiplomas : res
+                        })
                     })
                 })
-            })
+
+                // save emailIds in reducer
+                var obj = {
+                    emailIds: ids
+                  }
+                this.props.SaveEmailIds(obj)
             })
         }
         
@@ -159,4 +170,8 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps)(DiplomaList)
+function mapDispatchToProps(dispatch){
+    return bindActionCreators({SaveEmailIds : SaveEmailIds}, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DiplomaList)

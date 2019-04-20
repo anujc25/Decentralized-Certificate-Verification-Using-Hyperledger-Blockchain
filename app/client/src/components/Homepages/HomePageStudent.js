@@ -1,9 +1,10 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 import { withRouter } from 'react-router-dom'
-import * as API from '../../services/diplomaService';
-import '../../css/offCanvas.css';
-import DiplomaList from './UniversityComponents/DiplomaList';
-import AddEmailPopup from '../AddEmailPopup';
+import * as API from '../../services/diplomaService'
+import '../../css/offCanvas.css'
+import DiplomaList from './UniversityComponents/DiplomaList'
+import AddEmailPopup from '../AddEmailPopup'
+import {connect} from 'react-redux'
 
 class HomePageStudent extends Component{
 
@@ -18,12 +19,11 @@ class HomePageStudent extends Component{
     }
 
     renderEmailIdInformation = () => {
-      if (this.state.allDiplomas && this.state.allDiplomas.length > 0) {
-          return this.state.allDiplomas.map((diploma,index)=>{
+      if (this.props.userDetail.emailIds && this.props.userDetail.emailIds.length > 0) {
+          return this.props.userDetail.emailIds.map((id,index)=>{
               return(
                       <tr>
-                          <td>{diploma.degree}</td>
-                          <td>{diploma.department}</td>
+                          <td align="left">{id}</td>
                       </tr>           
               );
           });
@@ -53,12 +53,7 @@ class HomePageStudent extends Component{
                 <div class="my-3 p-3 bg-white rounded shadow-sm">
                     <div class="media text-muted pt-3">
                         <table class="table table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Email-Id</th>
-                                    <th>Verified</th>
-                                </tr>
-                            </thead>
+                            
                             <tbody>
                                 {this.renderEmailIdInformation()}
                             </tbody>
@@ -82,4 +77,11 @@ class HomePageStudent extends Component{
     }
 }
 
-export default withRouter(HomePageStudent);
+
+function mapStateToProps(state){
+    return {
+        userDetail: state.userDetail
+    }
+}
+
+export default withRouter(connect(mapStateToProps)(HomePageStudent))
