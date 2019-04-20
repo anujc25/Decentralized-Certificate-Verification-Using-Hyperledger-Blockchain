@@ -5,6 +5,10 @@ import '../../css/offCanvas.css';
 import UniversityAllUploads from './UniversityComponents/DiplomaList';
 import UniversityNewUpload from './UniversityComponents/UniversityNewUpload';
 
+import Sidebar from '../Generic/Sidebar'
+import HeaderNavBar from '../Generic/HeaderNavBar';
+import DataTable from '../Generic/DataTable';
+
 class HomePageUniversity extends Component{
 
     state = {
@@ -17,35 +21,33 @@ class HomePageUniversity extends Component{
         });
     }
 
+    componentDidMount(){
+    }
+
     render(){
-        return(
-            <div className="container">
-        
-                <section className="jumbotron text-center">
-                    <div className="container">
-                        <h1 className="jumbotron-heading text-muted">University Page</h1>
-                        <p className="lead text-muted">Click on upload button to upload a new certificate</p>
-                        <p>
-                            {/* <a className="btn btn-primary my-2" onClick={() => this.props.history.push('/homepage/university/uploadcertificate')}>Upload New Certificate</a> */}
-                            <a className="btn btn-primary my-2" onClick={this.togglePopup.bind(this)}>Upload Certificate</a>
-                            {/* <button onClick={this.togglePopup.bind(this)}>show popup</button> */}
-                            <a className="btn btn-primary my-2" onClick={() => this.props.history.push('/')}>Logout</a>
-                        </p>
+        return(    
+            <div>
+              <Sidebar/>
+              <div className="page-container">
+                <HeaderNavBar/>
+                <main className='main-content bgc-grey-100'>
+                  <div id='mainContent'>
+                    <div className="container-fluid">
+                      <h4 className="c-grey-900 mT-10 mB-30">Data Tables</h4>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <DataTable/>
+                        </div>
+                      </div>
                     </div>
-                </section>
-
-                <div class="media text-muted pt-1">
-                        Issued Diploma
-                </div>
-
-                <UniversityAllUploads role="UNIVERSITY"/>
-
-                {this.state.showUploadDiplomaPopuup ? 
-                    <UniversityNewUpload closeUploadPopup={this.togglePopup.bind(this)}/>
-                    : null
-                }
-
-            </div>    
+                  </div>
+                </main>
+        
+                <footer className="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
+                  <span>Copyright © 2017 Designed by <a href="https://colorlib.com" target='_blank' title="Colorlib">Colorlib</a>. All rights reserved.</span>
+                </footer>
+              </div>
+            </div>          
         );
     }
 }
