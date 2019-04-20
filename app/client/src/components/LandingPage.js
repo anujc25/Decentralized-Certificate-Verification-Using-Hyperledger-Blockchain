@@ -8,7 +8,7 @@ import '../css/4.css'
 import * as API from './../services/loginService'
 import { SaveUser } from '../actions/actions'
 import { connect } from 'react-redux'
-import img1 from '../images/bg.jpg'
+import img1 from '../images/bg1.jpg'
 
 class LandingPage extends Component {
 
@@ -124,51 +124,90 @@ class LandingPage extends Component {
        
       </div>
       <div className='col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r' style={{ 'min-width': '320px;' }}>
+
         <h2 className='fw-300 c-grey-900 mB-40'>Welcome to TrustCert</h2>
-  
-                    <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-                      <div className="form-group row">
-                      <label for="inputPassword3" class="col-sm-2 col-form-label">Username</label>
-                        <div className="col-sm-10">
-                          <input type="email" class="form-control" id="inputEmail3" placeholder="Email"/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-                        <div className="col-sm-10">
-                          <input type="password" class="form-control" id="inputPassword3" placeholder="Password"/>
-                        </div>
-                      </div>
-                      <fieldset className="form-group">
-                        <div className="row">
-                          <div className="col-sm-10">
-                            <div className="form-check">
-                              <label className="form-check-label">
-                                <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked/>
-                                    Student
-                              </label>
-                            </div>
-                            <div className="form-check">
-                              <label className="form-check-label">
-                                <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2"/>
-                                    University
-                              </label>
-                            </div>
-                            <div className="form-check disabled">
-                              <label className="form-check-label">
-                                <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3"/>
-                                    Employer
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      </fieldset>
-                      <div className="form-group row">
-                        <div className="col-sm-10">
-                          <button type="submit" className="btn btn-primary">Sign in</button>
-                        </div>
-                      </div>
-                    </form>
+
+        <form encType="multipart/form-data" onSubmit={this.onSubmit}>
+        
+          <div className="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Username</label>
+            <div className="col-sm-10">
+              <input type="text" class="form-control" id="studentEmail" placeholder="Enter Username" 
+                    onChange={(event) => {
+                                  this.setState({
+                                          ...this.state,
+                                          username: event.target.value
+                                      });
+                                  }}/>
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+            <div className="col-sm-10">
+              <input type="text" class="form-control" id="studentEmail" placeholder="Enter Secret"
+                      onChange={(event) => {
+                                  this.setState({
+                                          ...this.state,
+                                          secret: event.target.value
+                                      });
+                                  }}
+                    />
+            </div>
+          </div>
+
+          <fieldset className="form-group"
+                    onChange={(event) => {
+                                    this.setState({
+                                      ...this.state,
+                                      role: event.target.value
+                                    })
+                                }}>
+
+            <div className="row">
+              <div className="col-sm-10">
+
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked/>
+                        Student
+                  </label>
+                </div>
+
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2"/>
+                        University
+                  </label>
+                </div>
+
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3"/>
+                        Employer
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          
+        </form>
+
+        <div className="form-group row">
+            <div className="col-sm-10">
+              <button type="text" className="btn btn-primary" onClick={this.doLogin} >Login</button>
+
+              <div style={{ 'width': '5px',
+                  'height': 'auto',
+                  'display': 'inline-block' }} />
+
+              <button type="text" className="btn btn-primary" onClick={() => this.props.history.push('/registeruniversity')}> Register </button>
+            </div>
+          </div>
+
+          <h4 className='fw-300 c-grey-900 mB-40'>{this.state.loginError}</h4>
+          
       </div>
     </div>
 
