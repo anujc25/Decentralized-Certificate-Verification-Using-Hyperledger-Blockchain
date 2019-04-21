@@ -20,10 +20,9 @@ export default (function () {
 
   while (i--) {
     const
-      weatherType = list[i];
+      weatherType = list[i]
 
-      
-const elements = document.getElementsByClassName(weatherType)
+    const elements = document.getElementsByClassName(weatherType)
     let j = elements.length
 
     while (j--) {

@@ -31,13 +31,13 @@ class LandingPage extends Component {
       .then((res) => {
         console.log(res);
         if (!res.error && res.result && res.result.role) {
-          if (res.result.role != ''){
+          if (res.result.role === this.state.role){
             var obj = {
               userName: this.state.username,
               role: this.state.role
             }
             this.props.SaveUser(obj)
-            this.props.history.push('/homepage/' + res.result.role)
+            this.props.history.push('/homepage')
           }
           else {
             this.setState({
@@ -54,70 +54,6 @@ class LandingPage extends Component {
 
   render () {
     return (
-
-      // <div classNameName='site-wrapper'>
-
-      //   <div classNameName='site-wrapper-inner'>
-
-      //     <div className='cover-container'>
-      //       <main role='main' className='inner cover'>
-      //         <h1 className='cover-heading'>TrustCert</h1>
-      //         <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-      //           <label for="issuer">Username</label>
-      //           <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Username"
-      //               onChange={(event) => {
-      //               this.setState({
-      //                       ...this.state,
-      //                       username: event.target.value
-      //                   });
-      //               }}
-      //           >
-      //           </input>
-      //           <label for="issuer">Secret</label>
-      //           <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Secret"
-      //               onChange={(event) => {
-      //               this.setState({
-      //                       ...this.state,
-      //                       secret: event.target.value
-      //                   });
-      //               }}
-      //           >
-      //           </input>
-      //           <label for="issuer">Role</label>
-      //           <select name="role" onChange={(event) => {
-      //               this.setState({
-      //                 ...this.state,
-      //                 role: event.target.value
-      //               })
-      //           }}>
-      //             <option value="STUDENT">STUDENT</option>
-      //             <option value="UNIVERSITY">UNIVERSITY</option>
-      //             <option value="EMPLOYER">EMPLOYER</option>
-      //           </select>
-      //         </form>
-      //         <p className='lead'>
-      //           <button type='text' className='btn btn-primary' onClick={() => this.props.history.push('/registeruniversity')}>Register</button>
-
-      //           <div style={{ 'width': '5px',
-      //             'height': 'auto',
-      //             'display': 'inline-block' }} />
-
-      //           <button type='text' className='btn btn-primary' onClick={this.doLogin}>Login</button>
-      //         </p>
-      //         <p className='lead'>
-      //         {this.state.loginError}
-      //         </p>
-      //       </main>
-
-
-
-      //     </div>
-
-      //   </div>
-
-      // </div>
-    
-    
 
     <div className='peers ai-s fxw-nw h-100vh'>
       <div className='d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv' style={{ 'background-image': `url(${img1})` }}>
@@ -169,21 +105,21 @@ class LandingPage extends Component {
 
                 <div className="form-check">
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked/>
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="STUDENT" checked/>
                         Student
                   </label>
                 </div>
 
                 <div className="form-check">
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2"/>
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="UNIVERSITY"/>
                         University
                   </label>
                 </div>
 
                 <div className="form-check">
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3"/>
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="EMPLOYER"/>
                         Employer
                   </label>
                 </div>

@@ -18,7 +18,7 @@
   },
   "scripts": {
     "electron-pack": "electron-builder -c.extraMetadata.main=build/electron.js .",
-    "start": "concurrently \"BROWSER=none PORT=3001 react-scripts start\" \"wait-on http://localhost:3001 && electron .\"",
+    "start": "concurrently \"BROWSER=none PORT=3000 react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

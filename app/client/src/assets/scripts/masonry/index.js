@@ -1,5 +1,5 @@
-import * as $ from 'jquery';
-import Masonry from 'masonry-layout';
+import * as $ from 'jquery'
+import Masonry from 'masonry-layout'
 
 export default (function () {
   window.addEventListener('load', () => {
@@ -7,8 +7,8 @@ export default (function () {
       new Masonry('.masonry', {
         itemSelector: '.masonry-item',
         columnWidth: '.masonry-sizer',
-        percentPosition: true,
-      });
+        percentPosition: true
+      })
     }
-  });
-}());
+  })
+}())

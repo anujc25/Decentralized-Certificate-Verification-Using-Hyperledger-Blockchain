@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+import * as $ from 'jquery'
 
 export default (function () {
   // ------------------------------------------------------
@@ -8,18 +8,17 @@ export default (function () {
   /**
    * NOTE: Register resize event for Masonry layout
    */
-  const EVENT = document.createEvent('UIEvents');
-  window.EVENT = EVENT;
-  EVENT.initUIEvent('resize', true, false, window, 0);
-
+  const EVENT = document.createEvent('UIEvents')
+  window.EVENT = EVENT
+  EVENT.initUIEvent('resize', true, false, window, 0)
 
   window.addEventListener('load', () => {
     /**
      * Trigger window resize event after page load
      * for recalculation of masonry layout.
      */
-    window.dispatchEvent(EVENT);
-  });
+    window.dispatchEvent(EVENT)
+  })
 
   // ------------------------------------------------------
   // @External Links
@@ -30,7 +29,7 @@ export default (function () {
     .filter('[href^="http"], [href^="//"]')
     .not(`[href*="${window.location.host}"]`)
     .attr('rel', 'noopener noreferrer')
-    .attr('target', '_blank');
+    .attr('target', '_blank')
 
   // ------------------------------------------------------
   // @Resize Trigger
@@ -38,6 +37,6 @@ export default (function () {
 
   // Trigger resize on any element click
   document.addEventListener('click', () => {
-    window.dispatchEvent(window.EVENT);
-  });
-}());
+    window.dispatchEvent(window.EVENT)
+  })
+}())
