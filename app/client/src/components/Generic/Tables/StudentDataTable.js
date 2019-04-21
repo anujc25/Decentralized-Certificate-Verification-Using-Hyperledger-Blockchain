@@ -20,8 +20,7 @@ class StudentDataTable extends Component {
     username: this.props.userDetail.userName,
     emailIds : "",
     showUploadDiplomaPopuup : false,
-    uuid : "",
-    allDiplomas :[]
+    uuid : ""
   };
 
   dataTable = null

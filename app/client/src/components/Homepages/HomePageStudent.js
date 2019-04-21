@@ -89,6 +89,7 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
 import StudentDataTable from '../Generic/Tables/StudentDataTable';
+import StudentEmailsDataTable from '../Generic/Tables/StudentEmailsDataTable';
 
 class HomePageUniversity extends Component{
 
@@ -112,6 +113,7 @@ class HomePageUniversity extends Component{
             <div className="row">
               <div className="col-md-12">
                 <StudentDataTable/>
+                <StudentEmailsDataTable/>
               </div>
             </div>
             </div>          
