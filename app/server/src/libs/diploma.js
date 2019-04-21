@@ -20,3 +20,13 @@ exports.uploadDiploma = async function (fileMetadata, file) {
     return { bSuccess: false, err: response.Error }
   }
 }
+
+exports.getDiplomaHistory = async function (username, uuid) {
+  var response = await chaincode.getDimplomaHistory(username, uuid)
+  console.log('chaincode response: ', response)
+  if (response.Error === '') {
+    return { result: response.result, err: null }
+  } else {
+    return { result: response.result, err: response.Error }
+  }
+}
