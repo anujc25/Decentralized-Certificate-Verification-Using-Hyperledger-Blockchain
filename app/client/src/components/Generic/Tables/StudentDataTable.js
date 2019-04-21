@@ -3,6 +3,7 @@ import ApplyDataTableProperties from '../../../assets/scripts/datatable/index.js
 import * as $ from 'jquery'
 import 'datatables.net'
 import * as API from '../../../services/getAllDiplomas'
+import * as diplomaAPI from '../../../services/diplomaService'
 import * as BackendAPI from '../../../services/backendAPI'
 import {bindActionCreators} from 'redux'
 import {SaveEmailIds} from '../../../actions/actions'
@@ -20,7 +21,9 @@ class StudentDataTable extends Component {
     username: this.props.userDetail.userName,
     emailIds : "",
     showUploadDiplomaPopuup : false,
-    uuid : ""
+    diplomaUuid : "",
+    employerEmailId: "",
+    message: ""
   };
 
   dataTable = null
@@ -90,15 +93,50 @@ class StudentDataTable extends Component {
     ApplyDataTableProperties()
   }
 
+  setPopupState(uuid) {
+    this.setState({
+      ...this.state,
+      diplomaUuid: uuid,
+      employerEmailId: "",
+      message:""
+    })
+  }
+
   renderDiplomaInformation = () => {
     if (this.state.allDiplomas && this.state.allDiplomas.length > 0) {    
         return this.state.allDiplomas.map((diploma,index)=>{
             return(                    
-                <Row key={index}  diploma={diploma} />        
+                <Row key={index} openPopup={this.setPopupState.bind(this)} diploma={diploma} />        
             );
         });
     }     
-}
+  }
+
+  shareDiploma = () => {
+    var payload = {
+      username: this.props.userDetail.userName,
+      employerEmail: this.state.employerEmailId,
+      diplomaUuid: this.state.diplomaUuid
+    }
+    diplomaAPI.shareStudentDiploma(payload)
+    .then((res) => {
+        console.log(res);
+        this.setState({
+            ...this.state,
+            message: res.Status
+        }); 
+    })
+    .catch((res) => {
+        console.log(res)
+        this.setState({
+            message: res.Status,
+        });   
+    });
+  }
+
+  onCloseModal = () => {
+    this.newEmailAddress = null
+  }
 
   render () {
   
@@ -116,6 +154,7 @@ class StudentDataTable extends Component {
                 <th>Graduation Term</th>
                 <th>Timestamp</th>
                 <th>Download</th>
+                <th>Share</th>
               </tr>
             </thead>
             <tbody>              
@@ -123,7 +162,42 @@ class StudentDataTable extends Component {
             </tbody>
           </table>
         </div>
-      </div>      
+        <div className="modal fade" id="shareDiploma" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">Share Diploma</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="form-group row">                        
+                  <div className="col-sm-12">
+                    <label>Diploma UUID: {this.state.diplomaUuid}</label>
+                  </div>
+                  <div className="col-sm-12">
+                    <input type="text" class="form-control" id="register-new-email" placeholder="Enter Email" 
+                          onChange={(event) => {
+                            this.setState({
+                                    ...this.state,
+                                    employerEmailId: event.target.value
+                                });
+                            }}/>
+                  </div>
+                  <div className="col-sm-12">
+                    <label>{this.state.message}</label>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={this.onCloseModal()}>Close</button>
+                <button type="button" className="btn btn-primary" onClick={this.shareDiploma}>Share</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>      
     )
   }
 }

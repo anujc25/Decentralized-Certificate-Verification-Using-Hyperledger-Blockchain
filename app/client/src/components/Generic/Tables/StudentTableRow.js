@@ -29,6 +29,8 @@ class StudentTableRow extends Component {
         <td>{this.props.diploma.term}</td>
         <td>{(new Date(this.props.diploma.timestamp)).toLocaleString()}</td>
         <td> <button className="btn cur-p btn-primary" onClick={this.downloadDiploma}><i className="c-white-500 ti-download" /> </button></td>
+        <td> <button className="btn cur-p btn-primary" data-toggle="modal" data-target="#shareDiploma" onClick={() => this.props.openPopup(this.props.diploma.diplomaUUID)}><i className="c-white-500 ti-share" /> </button></td>
+        
       </tr>
     )
   }
