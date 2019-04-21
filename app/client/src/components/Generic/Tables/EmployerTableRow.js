@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { save } from 'save-file'
 import * as DiplomaAPI from '../../../services/diplomaService'
-class UniversityTableRow extends Component {
+class EmployerTableRow extends Component {
 
   downloadDiploma = (event) => {    
     DiplomaAPI.downloadStudentDiploma(this.props.diploma.ipfsLink)
@@ -33,4 +33,4 @@ class UniversityTableRow extends Component {
   }
 }
 
-export default UniversityTableRow
+export default EmployerTableRow
