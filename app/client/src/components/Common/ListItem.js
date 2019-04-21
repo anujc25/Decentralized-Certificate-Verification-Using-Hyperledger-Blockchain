@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import {withRouter } from 'react-router-dom';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { UpdateUniversityView } from '../../actions/actions'
 
 class ListItem extends Component {
 
@@ -9,11 +12,17 @@ class ListItem extends Component {
     console.log("this.props.value:",this.props.value)
     
     if ( this.props.value === "Dashboard"){
+      this.props.UpdateUniversityView({"view":"Dashboard"})
       this.props.history.push('/homepage')
     }
     else if ( this.props.value === "Logout"){
       this.props.history.push('/')
     }
+    else if ( this.props.value === "Upload Diploma"){
+      this.props.UpdateUniversityView({"view":"Upload Diploma"})
+      this.props.history.push('/homepage')
+    }
+    
     
 
   }
@@ -32,5 +41,9 @@ class ListItem extends Component {
   }
 }
 
-export default withRouter (ListItem)
+function mapDispatchToProps(dispatch){
+  return bindActionCreators({UpdateUniversityView : UpdateUniversityView}, dispatch);
+}
+
+export default withRouter(connect(null, mapDispatchToProps)(ListItem))
  
