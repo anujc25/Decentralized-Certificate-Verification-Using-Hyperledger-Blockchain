@@ -2,7 +2,7 @@ import { SAVE_USER, SAVE_EMAILIDS } from '../actions/actions'
 
 const initialState = {
   userName: '',
-  role: 'UNIVERSITY',
+  role: '',
   isLoggedIn: false,
   emailIds: ''
 }

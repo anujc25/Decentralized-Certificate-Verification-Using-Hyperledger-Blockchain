@@ -25,15 +25,12 @@ class ListItem extends Component {
       this.props.UpdateUniversityView({"view":"Upload Diploma"})
       this.props.history.push('/homepage')
     }
-    
-    
-
   }
   render () {
     let cssClass = 'c-blue-500 ' + this.props.icon
     return (
-      <li className='nav-item mT-30 active' >
-        <a className='sidebar-link' onClick={this.changeViewFunction} >
+      <li className='nav-item mT-30 c-pointer active' onClick={this.changeViewFunction} >
+        <a className='sidebar-link'>
           <span className='icon-holder'>
             <i className={cssClass} />
           </span>

@@ -10,6 +10,17 @@ import HeaderNavBar from '../Generic/HeaderNavBar';
 
 class HomePage extends Component{
     
+    componentWillMount(){
+        let bValidUserInfo = this.props.userDetail && this.props.userDetail.role &&
+        (this.props.userDetail.role === 'UNIVERSITY' || 
+         this.props.userDetail.role === 'STUDENT' || 
+         this.props.userDetail.role === 'EMPLOYER')
+
+        if (!bValidUserInfo){
+            this.props.history.push('/')
+        }
+    }
+
     renderRelaventPage = () => {        
         console.log(this.props.userDetail)
         if (this.props.userDetail && this.props.userDetail.role){

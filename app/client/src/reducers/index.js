@@ -4,7 +4,7 @@ import UniversityViewUpdate from './reducer-updateUniversityView'
 
 const allReducers = combineReducers({
   userDetail: UserReducer,
-  universityViewUpdate:UniversityViewUpdate
+  universityViewUpdate: UniversityViewUpdate
 })
 
 export default allReducers

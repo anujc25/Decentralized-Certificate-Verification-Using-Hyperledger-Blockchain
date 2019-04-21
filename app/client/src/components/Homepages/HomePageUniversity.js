@@ -37,7 +37,7 @@ class HomePageUniversity extends Component{
                     <div>
                         {/* <div class="masonry-item col-md-3"></div> */}
                         
-                    <div class="masonry-item col-md-8 ">
+                    <div class="masonry-item">
                 <div class="bgc-white p-20 bd">
                   <h6 class="c-grey-900">Complex Form Layout</h6>
                   <div class="mT-30">
