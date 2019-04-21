@@ -64,28 +64,7 @@ class UniversityDataTable extends Component {
             diploma.ipfsLink
           ]
             return(                    
-                    <Row value={array} />
-                    // <tr key={index}>
-                    //     <td>{diploma.degree}</td>
-                    //     <td>{diploma.department}</td>
-                    //     <td>{diploma.emailId}</td>
-                    //     <td>{diploma.name}</td>
-                    //     <td>{diploma.term}</td>
-                    //     <td onClick={this.downloadDiploma}>{diploma.ipfsLink}</td>
-                    //     {
-                    //         this.props.role == "STUDENT" ? 
-                    //         <td>
-                    //             <button className="btn btn-primary my-2" onClick={()=>{
-                    //                 this.setState({
-                    //                     ...this.state,
-                    //                     showUploadDiplomaPopuup: !this.state.showUploadDiplomaPopuup,
-                    //                     uuid: diploma.diplomaUUID
-                    //                 })
-                    //             }}
-                    //             >Share</button>
-                    //         </td> : null
-                    //     }   
-                    // </tr>           
+              <Row value={array} />    
             );
         });
     }     
@@ -106,6 +85,7 @@ class UniversityDataTable extends Component {
                 <th>Degree</th>
                 <th>Graduation Term</th>
                 <th>IPFS Hash</th>
+                <th>Download</th>
               </tr>
             </thead>
             <tbody>              
