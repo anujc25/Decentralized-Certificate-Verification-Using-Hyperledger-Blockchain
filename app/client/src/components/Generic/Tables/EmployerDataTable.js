@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 
 import Row from './UniversityTableRow'
 
-class UniversityDataTable extends Component {
+class EmployerDataTable extends Component {
 
 
   state = {      
@@ -23,10 +23,10 @@ class UniversityDataTable extends Component {
   componentWillMount () {
     console.log("componentWillMount")
     let data = { "username" : this.props.userDetail.userName}
-    API.allUniversityDiplomas(data).then((res) => {
-      console.log(res)
+
+    API.allEmployerDiplomas(data).then((res) =>{
       this.setState({
-        allDiplomas: res
+          allDiplomas : res
       })
     })
   }
@@ -37,7 +37,7 @@ class UniversityDataTable extends Component {
     }
   }
 
-  componentDidUpdate(){    
+  componentDidUpdate(){        
     let t = $('#dataTable').DataTable()
     this.dataTable = t
   }
@@ -45,15 +45,6 @@ class UniversityDataTable extends Component {
   renderDiplomaInformation = () => {
     if (this.state.allDiplomas && this.state.allDiplomas.length > 0) {    
         return this.state.allDiplomas.map((diploma,index)=>{
-          let array = [
-            diploma.name,
-            diploma.emailId,
-            diploma.department,
-            diploma.degree,
-            diploma.term,
-            new Date(diploma.timestamp),
-            diploma.ipfsLink
-          ]
             return(                    
               <Row key={index} diploma={diploma} />    
             );
@@ -94,4 +85,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(UniversityDataTable))
+export default withRouter(connect(mapStateToProps)(EmployerDataTable))

@@ -25,7 +25,7 @@ class HomePageUniversity extends Component{
     render(){
         return(    
             <div>
-            <h4 className="c-grey-900 mT-10 mB-30">Data Tables</h4>
+            <h4 className="c-grey-900 mT-10 mB-30">Issued Student Diploma</h4>
             <div className="row">
               <div className="col-md-12">
                 <UniversityDataTable/>

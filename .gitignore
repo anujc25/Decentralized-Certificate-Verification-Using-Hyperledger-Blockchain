@@ -1,2 +1,3 @@
 chaincode/bin
 certificates
+*.pem
