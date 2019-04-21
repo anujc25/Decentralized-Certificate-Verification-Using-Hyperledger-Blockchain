@@ -3,6 +3,7 @@ import {withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { UpdateUniversityView } from '../../actions/actions'
+import { UpdateStudentView } from '../../actions/actions'
 
 class ListItem extends Component {
 
@@ -12,8 +13,25 @@ class ListItem extends Component {
     console.log("this.props.value:",this.props.value)
     
     if ( this.props.value === "Dashboard"){
-      this.props.UpdateUniversityView({"view":"Dashboard"})
-      this.props.history.push('/homepage')
+        if (this.props.userDetail.role === "UNIVERSITY"){
+
+            this.props.UpdateUniversityView({"view":"Dashboard"})
+            this.props.history.push('/homepage')
+        }
+
+        else if (this.props.userDetail.role === "STUDENT"){
+
+          this.props.UpdateStudentView({"view":"Dashboard"})
+          this.props.history.push('/homepage')
+        }
+
+        else if (this.props.userDetail.role === "EMPLOYER"){
+          
+          // this.props.UpdateUniversityView({"view":"Dashboard"})
+          this.props.history.push('/homepage')
+        }
+        
+      
     }
     else if ( this.props.value === "Logout"){
       localStorage.setItem("userName", null);
@@ -23,6 +41,11 @@ class ListItem extends Component {
     }
     else if ( this.props.value === "Upload Diploma"){
       this.props.UpdateUniversityView({"view":"Upload Diploma"})
+      this.props.history.push('/homepage')
+    }
+
+    else if ( this.props.value === "My Emails"){
+      this.props.UpdateStudentView({"view":"My Emails"})
       this.props.history.push('/homepage')
     }
   }
@@ -41,9 +64,18 @@ class ListItem extends Component {
   }
 }
 
-function mapDispatchToProps(dispatch){
-  return bindActionCreators({UpdateUniversityView : UpdateUniversityView}, dispatch);
+function mapStateToProps(state){
+  return {
+      userDetail: state.userDetail
+  }
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(ListItem))
+function mapDispatchToProps(dispatch){
+  return bindActionCreators({
+    UpdateUniversityView : UpdateUniversityView,
+    UpdateStudentView : UpdateStudentView
+  }, dispatch);
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListItem))
  

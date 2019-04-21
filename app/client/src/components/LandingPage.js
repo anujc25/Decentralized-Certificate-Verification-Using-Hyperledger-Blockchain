@@ -95,8 +95,7 @@ requestLogin = (e) => {
     <div className='peers ai-s fxw-nw h-100vh'>
       <div className='d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv' style={{ 'background-image': `url(${img1})` }}>
        
-      </div>
-      <div className='col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r' style={{ 'min-width': '320px;' }}>
+      <div className='col-4 col-md-4 offset-md-8 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r' style={{ 'min-width': '320px;', 'opacity': '0.9' }}>
 
         <h2 className='fw-300 c-grey-900 mB-40'>Welcome to TrustCert</h2>
 
@@ -181,6 +180,7 @@ requestLogin = (e) => {
 
           <h4 className='fw-300 c-grey-900 mB-40'>{this.state.loginError}</h4>
           
+      </div>
       </div>
     </div>
 

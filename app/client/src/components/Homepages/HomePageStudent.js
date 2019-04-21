@@ -35,14 +35,30 @@ class HomePageUniversity extends Component{
         })
     }
 
+    renderRelaventView = () => {
+        console.log("this.props.studentViewUpdate",this.props.studentViewUpdate)
+        if (this.props.studentViewUpdate && this.props.studentViewUpdate.view){
+            if(this.props.studentViewUpdate.view == "Dashboard"){
+                return(
+                    <StudentDataTable/>
+                );
+                
+            }
+            else{
+                return(
+                    <StudentEmailsDataTable/>
+                    );
+            }
+        }
+    }
+
     render(){
         return(    
             <div>
             <h4 className="c-grey-900 mT-10 mB-30">My Diploma</h4>
             <div className="row">
               <div className="col-md-12">
-                <StudentDataTable/>
-                <StudentEmailsDataTable/>
+              {this.renderRelaventView()}
               </div>
             </div>
             </div>          
@@ -52,7 +68,8 @@ class HomePageUniversity extends Component{
 
 function mapStateToProps(state){
   return {
-      userDetail: state.userDetail
+      userDetail: state.userDetail,
+      studentViewUpdate: state.studentViewUpdate
   }
 }
 
