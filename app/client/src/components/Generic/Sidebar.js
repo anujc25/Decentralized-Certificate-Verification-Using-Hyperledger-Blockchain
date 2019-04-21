@@ -1,19 +1,40 @@
 import React, { Component } from 'react'
 import ListItem from '../Common/ListItem'
+import {connect} from 'react-redux'
+
 class Sidebar extends Component {
+
   componentDidMount () {
+  }
+
+
+  renderRelaventPage = () => {
+    console.log("Inside the SideBar Page")
+    console.log(this.props.userDetail)
+    if (this.props.userDetail && this.props.userDetail.role){
+        
+        switch(this.props.userDetail.role){
+            case 'UNIVERSITY':
+                return(
+                  <ListItem value='Upload Diploma' icon='ti-share' />
+                );
+                break;
+            case 'STUDENT':
+                return(
+                  <ListItem value='My Emails' icon='ti-share' />
+                );
+                break;
+           
+            default:                
+                break;
+        }
+    }
+  
   }
 
   render () {
     let sideBarOptionsList
-
-    if (this.props.userDetail && this.props.userDetail.role) {
-      switch (this.props.userDetail.role) {
-        case 'UNIVERSITY':
-          // sideBarOptionsList
-          break
-      }
-    }
+    
     return (
       <div className='sidebar'>
         <div className='sidebar-inner'>
@@ -45,9 +66,10 @@ class Sidebar extends Component {
 
           <ul className='sidebar-menu scrollable pos-r'>
             <ListItem value='Dashboard' icon='ti-home' />
-            <ListItem value='Upload Diploma' icon='ti-share' />
+            {this.renderRelaventPage()}
             <ListItem value='Logout' icon='ti-power-off' />
           </ul>
+          
         </div>
       </div>
     )
@@ -60,4 +82,5 @@ function mapStateToProps (state) {
   }
 }
 
-export default Sidebar
+export default connect(mapStateToProps)(Sidebar)
+

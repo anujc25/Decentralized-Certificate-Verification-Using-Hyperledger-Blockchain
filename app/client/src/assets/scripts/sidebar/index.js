@@ -52,7 +52,7 @@ export function ApplySideBarProperties () {
     .filter(function () {
       const href = $(this).attr('href')
       const pattern = href[0] === '/' ? href.substr(1) : href
-      return pattern === (window.location.pathname).substr(1)
+         return pattern === (window.location.pathname).substr(1)
     })
     .addClass('active')
 
