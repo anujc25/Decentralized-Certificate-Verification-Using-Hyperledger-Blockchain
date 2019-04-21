@@ -4,7 +4,7 @@ class StudentEmailsTableRow extends Component {
   render () {
     return (
       <tr>
-        <td>{this.props.value[0]}</td>
+        <td>{this.props.email}</td>
       </tr>
     )
   }
