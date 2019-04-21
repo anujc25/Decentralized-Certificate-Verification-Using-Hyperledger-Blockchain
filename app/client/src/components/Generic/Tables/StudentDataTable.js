@@ -81,7 +81,7 @@ class StudentDataTable extends Component {
 
   componentDidUpdate(){    
     console.log("componentDidUpdate")    
-    let t = $('#dataTable').DataTable()
+    let t = $('#studentDataTable').DataTable()
     console.log("Datatable:", t)
     this.dataTable = t
   }
@@ -93,16 +93,8 @@ class StudentDataTable extends Component {
   renderDiplomaInformation = () => {
     if (this.state.allDiplomas && this.state.allDiplomas.length > 0) {    
         return this.state.allDiplomas.map((diploma,index)=>{
-          let array = [
-            diploma.name,
-            diploma.emailId,
-            diploma.department,
-            diploma.degree,
-            diploma.term,
-            diploma.ipfsLink
-          ]
             return(                    
-                <Row value={array} />        
+                <Row key={index}  diploma={diploma} />        
             );
         });
     }     
@@ -114,7 +106,7 @@ class StudentDataTable extends Component {
       <div>
         <div className='bgc-white bd bdrs-3 p-20 mB-20'>
           {/* <h4 className='c-grey-900 mB-20'>Issued Student Diploma</h4> */}
-          <table id='dataTable' className='table table-striped table-bordered' width='100%'>
+          <table id='studentDataTable' className='table table-striped table-bordered' width='100%'>
             <thead>
               <tr>
                 <th>Name</th>
@@ -122,7 +114,8 @@ class StudentDataTable extends Component {
                 <th>Department</th>
                 <th>Degree</th>
                 <th>Graduation Term</th>
-                <th>IPFS Hash</th>
+                <th>Timestamp</th>
+                <th>Download</th>
               </tr>
             </thead>
             <tbody>              
