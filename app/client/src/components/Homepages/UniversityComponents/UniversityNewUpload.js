@@ -3,12 +3,14 @@ import { withRouter } from 'react-router-dom'
 import * as API from '../../../services/diplomaService';
 // import '../../css/offCanvas.css';
 import '../../../css/popup.css';
+import {connect} from 'react-redux'
 
 class UniversityNewUpload extends Component{
    state = {
         selectedFile: '',
-        issuer:'',
+        // issuer:'',
         term:'',
+        termYear:'',
         degree:'',
         department:'',
         studentName:'',
@@ -31,13 +33,15 @@ class UniversityNewUpload extends Component{
         const selectedFile = this.state.selectedFile;
         var reader = new FileReader();
 
+        console.log("This.state",this.state);
+        
         reader.onload = (function() { 
             return function(e) { 
                 
                 var formData  = new FormData(); 
-                formData.append("issuer",this.state.issuer)
+                formData.append("issuer",this.props.userDetail.userName)
                 formData.append("selectedFile",this.state.selectedFile)
-                formData.append("term",this.state.term)
+                formData.append("term",this.state.term + " "+this.state.termYear)
                 formData.append("degree",this.state.degree)
                 formData.append("department",this.state.department)
                 formData.append("studentName",this.state.studentName)
@@ -64,64 +68,44 @@ class UniversityNewUpload extends Component{
 
     render(){
         return(
-            <div className='popup'>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-sm-3">
-                        </div>
-                        <div className="col-sm-6 rounded" style={{"background-color":"#222"}}>
-                            <h1> Upload Diploma</h1>
+        
+            <div class="masonry-item col-md-10">
+                <div class="bgc-white p-20 bd">
+                    <h6 class="c-grey-900">Upload New Certificate</h6>
+                    <div class="mT-30">
+                        <form encType="multipart/form-data" onSubmit={this.onSubmit}>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
 
-                            <div className="form-group">
-                                <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-                                <div className="row">
-                                <div className="col-sm-6">
-                                    <label for="issuer">Student Name</label>
+                                    <label>Student Name</label>
                                     <input type="text" className="form-control" id="studentName"  placeholder="Enter Student Name"
-                                        onChange={(event) => {
-                                        this.setState({
-                                                ...this.state,
-                                                studentName: event.target.value
-                                            });
-                                        }}
-                                    >
+                                                onChange={(event) => {
+                                                this.setState({
+                                                        ...this.state,
+                                                        studentName: event.target.value
+                                                    });
+                                                }}
+                                            >
                                     </input>
 
-                                    <label for="issuer">Student Email</label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Student Email</label>
                                     <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Student Email"
-                                        onChange={(event) => {
-                                            this.setState({
-                                                    ...this.state,
-                                                    studentEmail: event.target.value
-                                                });
-                                            }}
-                                    >
+                                                onChange={(event) => {
+                                                    this.setState({
+                                                            ...this.state,
+                                                            studentEmail: event.target.value
+                                                        });
+                                                    }}>
                                     </input>
+                                </div>
+                            </div>
 
-                                    <label for="issuer">Issuer</label>
-                                    <input type="text" className="form-control" id="issuer"  placeholder="Enter Issuer Name"
-                                        onChange={(event) => {
-                                            this.setState({
-                                                    ...this.state,
-                                                    issuer: event.target.value
-                                                });
-                                            }}
-                                    >
-                                    </input>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
 
-                                    <label for="term">Term</label>
-                                    <input type="text" className="form-control" id="term" placeholder="Enter Graduation Term"
-                                        onChange={(event) => {
-                                            this.setState({
-                                                    ...this.state,
-                                                    term: event.target.value
-                                                });
-                                            }}
-                                    >
-                                    </input>
-                                    </div>
-                                    <div className="col-sm-6">
-                                    <label for="degree">Degree</label>
+                                    <label>Degree</label>
                                     <input type="text" className="form-control" id="degree" placeholder="Enter Degree Name"
                                         onChange={(event) => {
                                             this.setState({
@@ -132,7 +116,9 @@ class UniversityNewUpload extends Component{
                                     >
                                     </input>
 
-                                    <label for="department">Department </label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Department </label>
                                     <input type="text" className="form-control" id="department" aria-describedby="emailHelp" placeholder="Enter Department Name"
                                         onChange={(event) => {
                                             this.setState({
@@ -142,30 +128,64 @@ class UniversityNewUpload extends Component{
                                             }}
                                     >
                                     </input>
-                                    
-                                    <label for="fileupload">fileupload</label>
-                                    <input className="form-control" type="file" name="selectedFile" onChange={this.onChange} />
-                                    </div>
-                                    </div>
-                                    <div style={{ 'width': '5px',
-                                                'height': 'auto',
-                                                'display': 'inline-block' }} />
-                                    <div>
-                                        <button className='btn btn-primary' type="submit">Submit</button>
-                                        <button className='btn btn-primary' onClick={() => this.props.closeUploadPopup()}>Close</button>
-                                    </div>
-
-                                </form>
-                                <label for="message">{this.state.message}</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-3">
-                        </div>                
+
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label>Term</label>
+                                    <select id="term" class="form-control" 
+                                                        onChange={(event) => {
+                                                                        this.setState({
+                                                                                ...this.state,
+                                                                                term: event.target.value
+                                                                            });
+                                                                        }}>
+                                        <option selected>Fall</option>
+                                        <option>Spring</option>
+                                        <option>Summer</option>
+                                    </select>
+                                    </div>
+                                    <div class="form-group col-md-3">    
+                                    <label>Year</label>                                        
+                                    <select id="termYear" class="form-control"
+                                                           onChange={(event) => {
+                                                            this.setState({
+                                                                    ...this.state,
+                                                                    termYear: event.target.value
+                                                                });
+                                                            }}>
+                                        <option selected>2019</option>
+                                        <option>2020</option>
+                                        <option>2021</option>
+                                        <option>2022</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>fileupload</label>
+                                    <input className="form-control" type="file" name="selectedFile" onChange={this.onChange} />
+                                </div>
+                            </div>
+                            
+                            <button className='btn btn-primary' type="submit">Submit</button>
+                        </form>
+                        <label>{this.state.message}</label>
                     </div>
-                </div>
-            </div>      
+                </div> 
+            </div>              
+                 
         );
     }
 }
 
-export default withRouter(UniversityNewUpload);
+function mapStateToProps(state){
+    return {
+        userDetail: state.userDetail
+    }
+}
+export default withRouter(connect(mapStateToProps)(UniversityNewUpload))
+
