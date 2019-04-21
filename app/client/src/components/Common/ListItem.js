@@ -16,6 +16,9 @@ class ListItem extends Component {
       this.props.history.push('/homepage')
     }
     else if ( this.props.value === "Logout"){
+      localStorage.setItem("userName", null);
+      localStorage.setItem("secret", null);
+      localStorage.setItem("role", null);
       this.props.history.push('/')
     }
     else if ( this.props.value === "Upload Diploma"){

@@ -4,6 +4,7 @@ import * as $ from 'jquery'
 import 'datatables.net'
 import {bindActionCreators} from 'redux'
 import {SaveEmailIds} from '../../../actions/actions'
+import * as BackendAPI from '../../../services/backendAPI'
 
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -13,13 +14,16 @@ import Row from './StudentEmailsTableRow'
 class StudentEmailsDataTable extends Component {
 
   dataTable = null
+  newEmailAddress = null
 
-  componentWillMount () {
-    console.log("componentWillMount")
+  state = {
+    allEmails : this.props.userDetail.emailIds
   }
 
-  componentDidMount(){
-    console.log("componentDidMount")    
+  componentWillMount () {    
+  }
+
+  componentDidMount() {
   }
 
   componentWillUpdate(){
@@ -29,30 +33,48 @@ class StudentEmailsDataTable extends Component {
   }
 
   componentDidUpdate(){
-    if (this.dataTable){
-      this.dataTable.destroy();      
-    }    
-    console.log("componentDidUpdate")    
-    let t = $('#dataTable').DataTable()
-    console.log("Datatable:", t)
+    let t = $('#studentEmaildataTable').DataTable()
     this.dataTable = t
-  }
-
-  applyDataTable(){
-    ApplyDataTableProperties()
   }
 
   renderEmailInformation = () => {
     if (this.props.userDetail.emailIds && this.props.userDetail.emailIds.length > 0) {    
         return this.props.userDetail.emailIds.map((emailId,index)=>{
-          let array = [
-            emailId
-          ]
             return(                    
-                <Row value={array} />        
+                <Row key={index} email={emailId} />        
             );
         });
-    }     
+    }    
+}
+
+registerEmail = () => {
+  console.log("Email:", this.newEmailAddress)
+  if(this.newEmailAddress){
+    var payload = {
+      'studentPrimaryEmail': this.props.userDetail.userName,
+      'studentSecondaryEmail': this.newEmailAddress
+    }
+
+    // TODO: remove below hardcoded lines
+    var payload = {
+      'studentPrimaryEmail': 'tejas.panchal@sjsu.edu',
+      'studentSecondaryEmail': this.newEmailAddress
+    }
+
+    BackendAPI.addStudentEmailId(payload).then((res) =>{
+        if (res.status == 200) {
+            console.log('Email-id successfully added. Please check your inbox.')
+            // this.setState({
+            //     ...this.state,
+            //     message: 'Email-id successfully added. Please check your inbox.'
+            // })
+        }
+    })
+  }
+}
+
+onCloseModal = () => {
+  this.newEmailAddress = null
 }
 
   render () {
@@ -60,8 +82,7 @@ class StudentEmailsDataTable extends Component {
     return (
       <div>
         <div className='bgc-white bd bdrs-3 p-20 mB-20'>
-          {/* <h4 className='c-grey-900 mB-20'>Issued Student Diploma</h4> */}
-          <table id='dataTable' className='table table-striped table-bordered' width='100%'>
+          <table id='studentEmaildataTable' className='table table-striped table-bordered' width='100%'>
             <thead>
               <tr>
                 <th>Email-Ids</th>
@@ -71,7 +92,38 @@ class StudentEmailsDataTable extends Component {
               {this.renderEmailInformation()}
             </tbody>
           </table>
-        </div>
+          <div>
+            <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#registerNewEmail">
+              Register New Email
+            </button>
+
+            <div className="modal fade" id="registerNewEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div className="modal-dialog" role="document">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">Register New Email</h5>
+                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="form-group row">                        
+                      <div className="col-sm-10">
+                        <input type="text" class="form-control" id="register-new-email" placeholder="Enter Email" 
+                              onChange={(event) => {this.newEmailAddress = event.target.value}}/>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={this.onCloseModal()}>Close</button>
+                    <button type="button" className="btn btn-primary" onClick={this.registerEmail}>Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>        
       </div>      
     )
   }

@@ -38,7 +38,7 @@ class EmployerDataTable extends Component {
   }
 
   componentDidUpdate(){        
-    let t = $('#dataTable').DataTable()
+    let t = $('#employerDataTable').DataTable()
     this.dataTable = t
   }
 
@@ -57,7 +57,7 @@ class EmployerDataTable extends Component {
     return (
       <div>
         <div className='bgc-white bd bdrs-3 p-20 mB-20'>
-          <table id='dataTable' className='table table-striped table-bordered' width='100%'>
+          <table id='employerDataTable' className='table table-striped table-bordered' width='100%'>
             <thead>
               <tr>
                 <th>Name</th>

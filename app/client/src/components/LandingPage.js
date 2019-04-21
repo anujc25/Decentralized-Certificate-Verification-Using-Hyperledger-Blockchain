@@ -9,6 +9,7 @@ import * as API from './../services/loginService'
 import { SaveUser } from '../actions/actions'
 import { connect } from 'react-redux'
 import img1 from '../images/bg1.jpg'
+import user from '../reducers/reducer-user';
 
 class LandingPage extends Component {
 
@@ -19,40 +20,76 @@ class LandingPage extends Component {
     role: 'STUDENT'   
 }
 
-  doLogin = (e) => {
+componentWillMount(){
 
+  let username = localStorage.getItem("userName")
+  let secret = localStorage.getItem("secret")
+  let role = localStorage.getItem("role")
+  console.log(username, secret, role)
+
+  if (username && secret && role){
+    this.setState({
+      username: username,
+      secret: secret ,
+      role: role   
+    });
+
+    var payload = {
+      username: username,
+      secret : secret,
+      role : role
+    }
+    this.doLogin(payload, false)
+  }  
+}
+
+requestLogin = (e) => {
   var payload = {
       username: this.state.username,
       secret : this.state.secret,
       role : this.state.role
   }
+  this.doLogin(payload, true)
+}
 
-  API.universityLogin(payload)
-      .then((res) => {
-        console.log(res);
-        if (!res.error && res.result && res.result.role) {
-          if (res.result.role === this.state.role){
-            var obj = {
-              userName: this.state.username,
-              role: this.state.role
-            }
-            this.props.SaveUser(obj)
-            this.props.history.push('/homepage')
+  doLogin = (payload, bShowError) => {
+    API.universityLogin(payload)
+    .then((res) => {
+      console.log(res);
+      if (!res.error && res.result && res.result.role) {
+        console.log(res.result.role, this.state.role)
+        if (res.result.role === this.state.role){
+          var obj = {
+            userName: this.state.username,
+            role: this.state.role
           }
-          else {
+
+          localStorage.setItem("userName", this.state.username);
+          localStorage.setItem("secret", this.state.secret);
+          localStorage.setItem("role", this.state.role);
+
+          this.props.SaveUser(obj)
+          this.props.history.push('/homepage')
+        }
+        else {
+          if(bShowError){
             this.setState({
               loginError: "Login Failed. " + res.error,
             });
-          }
-        } else {
+          }        
+        }
+      } else {
+        if(bShowError){
           this.setState({
-            loginError: "Login Failed. " + res.error,
+            loginError: "Login Failed!" + res.error,
           });            
         }
-      });
+      }
+    });
   }
 
   render () {
+    console.log(this.state)
     return (
 
     <div className='peers ai-s fxw-nw h-100vh'>
@@ -105,7 +142,7 @@ class LandingPage extends Component {
 
                 <div className="form-check">
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="STUDENT" checked/>
+                    <input className="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="STUDENT"/>
                         Student
                   </label>
                 </div>
@@ -132,7 +169,7 @@ class LandingPage extends Component {
 
         <div className="form-group row">
             <div className="col-sm-10">
-              <button type="text" className="btn btn-primary" onClick={this.doLogin} >Login</button>
+              <button type="text" className="btn btn-primary" onClick={this.requestLogin} >Login</button>
 
               <div style={{ 'width': '5px',
                   'height': 'auto',
