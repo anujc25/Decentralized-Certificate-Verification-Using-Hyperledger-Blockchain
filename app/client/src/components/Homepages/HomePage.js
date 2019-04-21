@@ -36,12 +36,6 @@ class HomePage extends Component{
                     break;
             }
         }
-
-        // TODO: REMOVE BELOW DEFAULT
-        return(
-            <HomePageUniversity/>
-        );
-
         this.props.history.push('/')                    
     }
     render(){

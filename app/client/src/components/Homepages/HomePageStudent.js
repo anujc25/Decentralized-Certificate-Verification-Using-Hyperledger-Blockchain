@@ -42,7 +42,7 @@ class HomePageUniversity extends Component{
             <div className="row">
               <div className="col-md-12">
                 <StudentDataTable/>
-                {/* <StudentEmailsDataTable/> */}
+                <StudentEmailsDataTable/>
               </div>
             </div>
             </div>          
