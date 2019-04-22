@@ -32,9 +32,6 @@ class StudentDataTable extends Component {
     console.log("componentWillMount")
     let payload = { "username" : this.props.userDetail.userName}
 
-    // TODO: remove below hardcoded line
-    payload = { "username" : "tejas.panchal@sjsu.edu"}
-
     // get student emailIds
     BackendAPI.allStudentEmailIds(payload).then((res) =>{
         var studentEmailIds = ""

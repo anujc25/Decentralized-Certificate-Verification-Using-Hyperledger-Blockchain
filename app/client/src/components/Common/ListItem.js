@@ -16,13 +16,13 @@ class ListItem extends Component {
         if (this.props.userDetail.role === "UNIVERSITY"){
 
             this.props.UpdateUniversityView({"view":"Dashboard"})
-            this.props.history.push('/homepage')
+            // this.props.history.push('/homepage')
         }
 
         else if (this.props.userDetail.role === "STUDENT"){
 
           this.props.UpdateStudentView({"view":"Dashboard"})
-          this.props.history.push('/homepage')
+          // this.props.history.push('/homepage')
         }
 
         else if (this.props.userDetail.role === "EMPLOYER"){
@@ -41,12 +41,12 @@ class ListItem extends Component {
     }
     else if ( this.props.value === "Upload Diploma"){
       this.props.UpdateUniversityView({"view":"Upload Diploma"})
-      this.props.history.push('/homepage')
+      // this.props.history.push('/homepage')
     }
 
     else if ( this.props.value === "My Emails"){
       this.props.UpdateStudentView({"view":"My Emails"})
-      this.props.history.push('/homepage')
+      // this.props.history.push('/homepage')
     }
   }
   render () {

@@ -20,19 +20,6 @@ class HomePageUniversity extends Component{
     }
 
     componentDidMount(){
-        let payload = { "username" : this.props.userDetail.userName}
-        BackendAPI.allStudentEmailIds(payload).then((res) =>{
-            var ids = []
-            if (res && res.length > 0) {
-                res.map((e) => {
-                    ids.push(e.email)
-                })
-            }
-            var obj = {
-                emailIds: ids
-            }
-            this.props.SaveEmailIds(obj)
-        })
     }
 
     renderRelaventView = () => {

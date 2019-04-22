@@ -16,23 +16,28 @@ class StudentEmailsDataTable extends Component {
   dataTable = null
   newEmailAddress = null
 
-  state = {
-    allEmails : this.props.userDetail.emailIds
-  }
-
   componentWillMount () {    
+    console.log("STUDENT EMAIL WILL MOUNT")
+    if (this.dataTable){
+      this.dataTable.destroy();      
+    }
   }
 
   componentDidMount() {
+    console.log("STUDENT EMAIL DID MOUNT")
+    let t = $('#studentEmaildataTable').DataTable()
+    this.dataTable = t
   }
 
   componentWillUpdate(){
+    console.log("STUDENT EMAIL WILL UPDATE")
     if (this.dataTable){
       this.dataTable.destroy();      
     }
   }
 
   componentDidUpdate(){
+    console.log("STUDENT EMAIL DID UPDATE")
     let t = $('#studentEmaildataTable').DataTable()
     this.dataTable = t
   }
@@ -52,12 +57,6 @@ registerEmail = () => {
   if(this.newEmailAddress){
     var payload = {
       'studentPrimaryEmail': this.props.userDetail.userName,
-      'studentSecondaryEmail': this.newEmailAddress
-    }
-
-    // TODO: remove below hardcoded lines
-    var payload = {
-      'studentPrimaryEmail': 'tejas.panchal@sjsu.edu',
       'studentSecondaryEmail': this.newEmailAddress
     }
 
