@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Config {
 
-	public static final String CA_ORG1_URL = "http://localhost:7054";
+	public static final String CA_ORG1_URL = "http://173.193.79.36:31966";
 
 	public static final String ADMIN = "admin";
 
@@ -12,19 +12,15 @@ public class Config {
 
 	public static final String ORG1 = "org1";
 
-	public static final String ORG1_MSP = "Org1MSP";
+	public static final String ORG1_MSP = "org1msp";
 
-//
-//
-//
+	public static final String CHAINCODE_1_NAME = "trustcert";
+
+	public static final String CHANNEL_NAME = "mychannel";
 //
 //	public static final String ORG2_MSP = "Org2MSP";
 //
 //	public static final String ORG2 = "org2";
-//
-//
-//
-//
 //
 //	public static final String CHANNEL_CONFIG_PATH = "config/channel.tx";
 //
@@ -50,8 +46,6 @@ public class Config {
 //
 //	public static final String ORDERER_NAME = "orderer.example.com";
 //
-//	public static final String CHANNEL_NAME = "mychannel";
-//
 //	public static final String ORG1_PEER_0 = "peer0.org1.example.com";
 //
 //	public static final String ORG1_PEER_0_URL = "grpc://localhost:7051";
@@ -69,8 +63,6 @@ public class Config {
 //	public static final String ORG2_PEER_1_URL = "grpc://localhost:8056";
 //
 //	public static final String CHAINCODE_ROOT_DIR = "chaincode";
-//
-//	public static final String CHAINCODE_1_NAME = "fabcar";
 //
 //	public static final String CHAINCODE_1_PATH = "github.com/fabcar";
 //

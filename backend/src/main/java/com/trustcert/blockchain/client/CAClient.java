@@ -20,10 +20,12 @@ import java.util.logging.Logger;
 
 import com.trustcert.blockchain.user.UserContext;
 import com.trustcert.blockchain.util.Util;
+import com.trustcert.model.UserRolesEnum;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
+import org.hyperledger.fabric_ca.sdk.Attribute;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
 import org.hyperledger.fabric_ca.sdk.RegistrationRequest;
 
@@ -120,5 +122,34 @@ public class CAClient {
 		Logger.getLogger(CAClient.class.getName()).log(Level.INFO, "CA -" + caUrl + " Registered User - " + username);
 		return enrollmentSecret;
 	}
+
+	/**
+	 * Register user with attributes.
+	 *
+	 * @param primaryEmailId
+	 * @param organization
+	 * @param role
+	 * @return enrollmentSecret
+	 * @throws Exception
+	 */
+	public String registerUserCAClientWrapper(String primaryEmailId, String organization, UserRolesEnum role) throws Exception {
+		UserContext userContext = Util.readUserContext(adminContext.getAffiliation(), primaryEmailId);
+		if (userContext != null) {
+			Logger.getLogger(CAClient.class.getName()).log(Level.WARNING, "CA -" + caUrl +" User " + primaryEmailId+ " is already registered.");
+			return null;
+		}
+
+		RegistrationRequest rr = new RegistrationRequest(primaryEmailId, organization);
+		Attribute emailAttribute = new Attribute("emailId",primaryEmailId,Boolean.TRUE);
+		Attribute roleAttribute = new Attribute("role",role.toString(),Boolean.TRUE);
+
+		rr.addAttribute(emailAttribute);
+		rr.addAttribute(roleAttribute);
+
+		String enrollmentSecret = instance.register(rr, adminContext);
+		Logger.getLogger(CAClient.class.getName()).log(Level.INFO, "CA -" + caUrl + " Registered User - " + primaryEmailId);
+		return enrollmentSecret;
+	}
+
 
 }

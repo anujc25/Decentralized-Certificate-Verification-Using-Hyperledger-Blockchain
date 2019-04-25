@@ -1,12 +1,15 @@
 package com.trustcert.controller;
 
+import com.trustcert.blockchain.user.UserContext;
 import com.trustcert.exceptions.AuthenticationException;
 import com.trustcert.exceptions.IllegalStudentException;
 import com.trustcert.model.PasswordModel;
 import com.trustcert.model.StudentDetailModel;
 import com.trustcert.model.StudentModel;
+import com.trustcert.model.UserRolesEnum;
 import com.trustcert.repository.StudentRepository;
 import com.trustcert.utility.PasswordEncoderBean;
+import com.trustcert.blockchain.user.RegisterUser;
 import lombok.Data;
 
 import org.springframework.data.mongodb.core.aggregation.BooleanOperators.BooleanOperatorFactory;
@@ -72,10 +75,18 @@ public class StudentController {
         Set<StudentDetailModel> s = new HashSet<>();
         s.add(sd);
         newStudent.setSecondaryAccountDetails(s);
+        newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
 
+        try{
+            RegisterUser registerUserInstance = new RegisterUser();
+            String eSecret = registerUserInstance.registerUser(newStudent.getStudentPrimaryEmail(), UserRolesEnum.STUDENT);
+            newStudent.setSecret(eSecret);
+        }
+        catch(Exception ex){
+            throw new IllegalStudentException("Cannot create student identity with email: "+ newStudent.getStudentPrimaryEmail());
+        }
         sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
 
-        newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
         return repository.save(newStudent);
     }
 
@@ -225,7 +236,7 @@ public class StudentController {
         if (!PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),student.getPassword())){
             throw new AuthenticationException("Incorrect password entered. Cannot authenticate.");
         }
-        LoginResponse loginResponse = new LoginResponse(student.getStudentPrimaryEmail(), student.getSecret(),student.getSecondaryAccountDetails());
+        LoginResponse loginResponse = new LoginResponse(student);
         return loginResponse;
     }
 
@@ -233,14 +244,18 @@ public class StudentController {
     private static class LoginResponse implements Serializable {
         String studentPrimaryEmail;
         String secret;
+        String firstname;
+        String lastName;
         Set<StudentDetailModel> secondaryAccountDetails;
 
-        LoginResponse(String studentPrimaryEmail, String secret, Set<StudentDetailModel> set){
-            this.studentPrimaryEmail = studentPrimaryEmail;
-            this.secret = secret;
-            if(set != null) {
-                this.secondaryAccountDetails.addAll(set);
+        LoginResponse(StudentModel studentModel){
+            this.studentPrimaryEmail = studentModel.getStudentPrimaryEmail();
+            this.secret = studentModel.getSecret();
+            if(studentModel.getSecondaryAccountDetails() != null) {
+                this.secondaryAccountDetails.addAll(studentModel.getSecondaryAccountDetails());
             }
+            this.firstname = studentModel.getStudentFirstName();
+            this.lastName = studentModel.getStudentLastName();
         }
     }
 
@@ -280,7 +295,6 @@ public class StudentController {
                 "Regards," + System.lineSeparator() + 
                 "Team TrustCert"
             );
-
 
             System.out.println("Done");
             Transport.send(message);

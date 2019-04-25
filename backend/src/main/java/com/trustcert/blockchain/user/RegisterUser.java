@@ -15,10 +15,11 @@ package com.trustcert.blockchain.user;
 import com.trustcert.blockchain.client.CAClient;
 import com.trustcert.blockchain.config.Config;
 import com.trustcert.blockchain.util.Util;
+import com.trustcert.model.UserRolesEnum;
 
 public class RegisterUser {
 
-	private String registerUser(String name) {
+	public String registerUser(String primaryEmailId, UserRolesEnum role) {
 		try {
 			Util.cleanUp();
 			String caUrl = Config.CA_ORG1_URL;
@@ -33,18 +34,17 @@ public class RegisterUser {
 
 			// Register and Enroll user to Org1MSP
 			UserContext userContext = new UserContext();
-			//String name = "user"+System.currentTimeMillis();
-			userContext.setName(name);
+			userContext.setName(primaryEmailId);
 			userContext.setAffiliation(Config.ORG1);
 			userContext.setMspId(Config.ORG1_MSP);
 
-			String eSecret = caClient.registerUser(name, Config.ORG1);
-			System.out.println("Successfully Registered User: " + name);
+			String eSecret = caClient.registerUserCAClientWrapper(primaryEmailId, Config.ORG1, role);
+			System.out.println("Successfully Registered User: " + primaryEmailId + eSecret);
 			return eSecret;
 //			userContext = caClient.enrollUser(userContext, eSecret);
 
 		} catch (Exception e) {
-			System.out.println("Registration failed for User: " + name);
+			System.out.println("Registration failed for User: " + primaryEmailId);
 			e.printStackTrace();
 		}
 		return null;
