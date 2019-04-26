@@ -35,7 +35,7 @@ class ListItem extends Component {
     }
     else if ( this.props.value === "Logout"){
       localStorage.setItem("userName", null);
-      localStorage.setItem("secret", null);
+      localStorage.setItem("password", null);
       localStorage.setItem("role", null);
       this.props.history.push('/')
     }

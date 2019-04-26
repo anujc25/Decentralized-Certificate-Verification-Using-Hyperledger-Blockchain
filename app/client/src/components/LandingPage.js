@@ -16,27 +16,29 @@ class LandingPage extends Component {
   state = {
     loginError: '',
     username: '',
-    secret: '' ,
-    role: 'STUDENT'   
+    password: '' ,
+    role: 'STUDENT',
+
 }
 
 componentWillMount(){
 
   let username = localStorage.getItem("userName")
-  let secret = localStorage.getItem("secret")
+  let password = localStorage.getItem("password")
   let role = localStorage.getItem("role")
-  console.log(username, secret, role)
+  console.log(username, password, role)
 
-  if (username && secret && role){
+  if (username && password && role){
     this.setState({
       username: username,
-      secret: secret ,
+      password: password,
       role: role   
     });
 
+    
     var payload = {
       username: username,
-      secret : secret,
+      password : password,
       role : role
     }
     this.doLogin(payload, false)
@@ -46,46 +48,158 @@ componentWillMount(){
 requestLogin = (e) => {
   var payload = {
       username: this.state.username,
-      secret : this.state.secret,
+      password : this.state.password,
       role : this.state.role
   }
   this.doLogin(payload, true)
 }
 
   doLogin = (payload, bShowError) => {
+    var requestPayload = null
+    if(payload.role === 'UNIVERSITY'){
+      requestPayload = {
+        universityPrimaryEmail: payload.username,
+        password: payload.password
+      }
+      this.doUniversityLogin(requestPayload, bShowError)
+    }
+    else if(payload.role === 'STUDENT'){
+      requestPayload = {
+        studentPrimaryEmail: payload.username,
+        password: payload.password
+      }
+      this.doStudentLogin(requestPayload, bShowError)
+    }
+    else if(payload.role === 'EMPLOYER'){
+      requestPayload = {
+        verifierPrimaryEmail: payload.username,
+        password: payload.password
+      }
+      this.doEmployerLogin(requestPayload, bShowError)
+    }
+  }
+
+  doUniversityLogin(payload, bShowError) {
+    var userInfo = null
     API.universityLogin(payload)
-    .then((res) => {
-      console.log(res);
-      if (!res.error && res.result && res.result.role) {
-        console.log(res.result.role, this.state.role)
-        if (res.result.role === this.state.role){
+      .then((res) => {
+        if (res){
           var obj = {
-            userName: this.state.username,
-            role: this.state.role
+            userName: res.universityPrimaryEmail,
+            firstName: res.universityFirstName,
+            lastName: res.universityLastName,
+            role: 'UNIVERSITY'
           }
-
-          localStorage.setItem("userName", this.state.username);
-          localStorage.setItem("secret", this.state.secret);
-          localStorage.setItem("role", this.state.role);
-
-          this.props.SaveUser(obj)
+          userInfo = obj          
+          var payload = {
+            username: res.universityPrimaryEmail,
+            secret : res.secret,
+            role: 'UNIVERSITY'
+          }
+          return API.blockchainLogin(payload)
+        }
+        else if (bShowError){
+          this.setState({
+            ...this.state,
+            loginError: "Login failed"
+          });
+        }
+        return false
+      })
+      .then((res) => {
+        if(res) {
+          this.props.SaveUser(userInfo)
           this.props.history.push('/homepage')
         }
-        else {
-          if(bShowError){
-            this.setState({
-              loginError: "Login Failed. " + res.error,
-            });
-          }        
-        }
-      } else {
-        if(bShowError){
+        else if (bShowError){
           this.setState({
-            loginError: "Login Failed!" + res.error,
-          });            
+            ...this.state,
+            loginError: "Login failed"
+          });
         }
-      }
-    });
+      });
+  }
+
+  doStudentLogin(payload, bShowError) {
+    var userInfo = null
+    API.studentLogin(payload)
+      .then((res) => {
+        if (res){
+          var obj = {
+            userName: res.studentPrimaryEmail,
+            firstName: res.studentFirstName,
+            lastName: res.studentLastName,
+            role: 'STUDENT'
+          }
+          userInfo = obj          
+          var payload = {
+            username: res.studentPrimaryEmail,
+            secret : res.secret,
+            role: 'STUDENT'
+          }
+          return API.blockchainLogin(payload)
+        }
+        else if (bShowError){
+          this.setState({
+            ...this.state,
+            loginError: "Login failed"
+          });
+        }
+        return false
+      })
+      .then((res) => {
+        if(res) {
+          this.props.SaveUser(userInfo)
+          this.props.history.push('/homepage')
+        }
+        else if (bShowError){
+          this.setState({
+            ...this.state,
+            loginError: "Login failed"
+          });
+        }
+      });
+  }
+
+  doEmployerLogin(payload, bShowError) {
+    var userInfo = null
+    API.employerLogin(payload)
+      .then((res) => {
+        if (res){
+          var obj = {
+            userName: res.verifierPrimaryEmail,
+            firstName: res.verifierFirstName,
+            lastName: res.verifierLastName,
+            role: 'EMPLOYER'
+          }
+          userInfo = obj          
+          var payload = {
+            username: res.verifierPrimaryEmail,
+            secret : res.secret,
+            role: 'EMPLOYER'
+          }
+          return API.blockchainLogin(payload)
+        }
+        else if (bShowError){
+          this.setState({
+            ...this.state,
+            loginError: "Login failed"
+          });
+        }
+        return false
+      })
+      .then((res) => {
+        if(res) {
+          this.props.SaveUser(userInfo)
+          this.props.history.push('/homepage')
+        }
+        else if (bShowError){
+          this.setState({
+            ...this.state,
+            loginError: "Login failed"
+          });
+        }
+      });
   }
 
   render () {

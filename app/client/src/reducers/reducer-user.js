@@ -13,6 +13,8 @@ const user = (state = initialState, action) => {
       // return Object.assign({}, state,
       state = {
         userName: action.obj.userName,
+        firstName: action.obj.firstName,
+        lastName: action.obj.lastName,
         role: action.obj.role,
         isLoggedIn: true,
         emailIds: state.emailIds
