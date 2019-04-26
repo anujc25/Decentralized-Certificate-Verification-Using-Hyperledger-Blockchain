@@ -36,3 +36,27 @@ export const addStudentEmailId = (payload) =>
       console.log('This is error', error)
       return error
     })
+
+export const registerUser = (payload) => {
+  var route = ""
+  if (payload.role == "STUDENT") {
+    route = `${backendApi}/students/`
+  }
+  else if (payload.role == "EMPLOYER") {
+    route = `${backendApi}/verifiers/`
+  }
+  fetch(route, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload.body)
+  })
+  .then(res => {
+    return res
+  }).catch(error => {
+    console.log('This is error', error)
+    return error
+  })
+}

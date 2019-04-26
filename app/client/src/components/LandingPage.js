@@ -31,21 +31,21 @@ componentWillMount(){
       <div className='col-4 col-md-4 offset-md-8 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r' style={{ 'min-width': '320px;', 'opacity': '0.9' }}>
 
         <h2 className='fw-300 c-grey-900 mB-40'>Welcome to TrustCert</h2>
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a id = "navLogin" class="nav-link active" href="#" onClick={() => {
-              document.getElementById("navLogin").className = "nav-link active"
-              document.getElementById("navRegister").className = "nav-link"
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a id="liLogin" className="nav-link active" href="#" onClick={() => {
+              document.getElementById("liLogin").className = "nav-link active"
+              document.getElementById("liRegister").className = "nav-link"
               this.setState({
                 ...this.state,
                 isLoginPage: true
               })
             }}>Login</a>
           </li>
-          <li class="nav-item">
-            <a id = "navRegister" class="nav-link" href="#" onClick={() => {
-              document.getElementById("navLogin").className = "nav-link"
-              document.getElementById("navRegister").className = "nav-link active"
+          <li className="nav-item">
+            <a id="liRegister" className="nav-link" href="#" onClick={() => {
+              document.getElementById("liRegister").className = "nav-link active"
+              document.getElementById("liLogin").className = "nav-link"
               this.setState({
                 ...this.state,
                 isLoginPage: false
