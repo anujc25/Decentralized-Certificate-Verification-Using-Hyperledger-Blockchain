@@ -47,7 +47,7 @@ public class RegisterUser {
 			userContext.setMspId(Config.ORG1_MSP);
 
 			String eSecret = caClient.registerUserCAClientWrapper(primaryEmailId, Config.ORG1, role);
-			System.out.println("Successfully Registered User: " + primaryEmailId + eSecret);
+//			System.out.println("Successfully Registered User: " + primaryEmailId + eSecret);
 			return eSecret;
 //			userContext = caClient.enrollUser(userContext, eSecret);
 

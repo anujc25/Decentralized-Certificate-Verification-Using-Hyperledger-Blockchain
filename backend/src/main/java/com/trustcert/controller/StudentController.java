@@ -75,7 +75,7 @@ public class StudentController {
         catch(Exception ex){
             throw new IllegalStudentException("Cannot create student identity with email: "+ newStudent.getStudentPrimaryEmail());
         }
-//        sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
+        sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
 
         return repository.save(newStudent);
     }

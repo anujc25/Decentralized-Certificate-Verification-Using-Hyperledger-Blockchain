@@ -1,12 +1,11 @@
 package com.trustcert.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -16,6 +15,7 @@ public class StudentModel implements Serializable {
     private String studentPrimaryEmail; // Primary User Identity
     private String studentFirstName;
     private String studentLastName;
+    @JsonIgnore
     private String password;
 
     private String secret;
@@ -57,7 +57,7 @@ public class StudentModel implements Serializable {
     public String getPassword() {
         return password;
     }
-
+    @JsonProperty("password")
     public void setPassword(String password) {
         this.password = password;
     }
