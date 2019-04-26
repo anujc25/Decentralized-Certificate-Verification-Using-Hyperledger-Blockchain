@@ -6,6 +6,7 @@ import UniversityAllUploads from './UniversityComponents/DiplomaList';
 import UniversityNewUpload from './UniversityComponents/UniversityNewUpload';
 
 import UniversityDataTable from '../Generic/Tables/UniversityDataTable';
+import Profile from '../Profile'
 import {connect} from 'react-redux'
 
 class HomePageUniversity extends Component{
@@ -32,9 +33,14 @@ class HomePageUniversity extends Component{
                 );
                 
             }
-            else{
+            else if (this.props.universityViewUpdate.view == "Upload Diploma"){
                 return(
                     <UniversityNewUpload/>
+                    );
+            }
+            else{
+                return(
+                    <Profile/>
                     );
             }
         }
@@ -43,7 +49,6 @@ class HomePageUniversity extends Component{
     render(){
         return(    
             <div>
-            <h4 className="c-grey-900 mT-10 mB-30">Issued Student Diploma</h4>
             <div className="row">
               <div className="col-md-12">
                 {this.renderRelaventView()}

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { UpdateUniversityView } from '../../actions/actions'
 import { UpdateStudentView } from '../../actions/actions'
+import { UpdateEmployerView } from '../../actions/actions'
 
 class ListItem extends Component {
 
@@ -27,8 +28,29 @@ class ListItem extends Component {
 
         else if (this.props.userDetail.role === "EMPLOYER"){
           
-          // this.props.UpdateUniversityView({"view":"Dashboard"})
-          this.props.history.push('/homepage')
+          this.props.UpdateEmployerView({"view":"Dashboard"})
+          // this.props.history.push('/homepage')
+        }
+        
+      
+    }
+    else if ( this.props.value === "Profile"){
+        if (this.props.userDetail.role === "UNIVERSITY"){
+
+            this.props.UpdateUniversityView({"view":"Profile"})
+            // this.props.history.push('/homepage')
+        }
+
+        else if (this.props.userDetail.role === "STUDENT"){
+
+          this.props.UpdateStudentView({"view":"Profile"})
+          // this.props.history.push('/homepage')
+        }
+
+        else if (this.props.userDetail.role === "EMPLOYER"){
+          
+          this.props.UpdateEmployerView({"view":"Profile"})
+          // this.props.history.push('/homepage')
         }
         
       
@@ -73,7 +95,8 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
   return bindActionCreators({
     UpdateUniversityView : UpdateUniversityView,
-    UpdateStudentView : UpdateStudentView
+    UpdateStudentView : UpdateStudentView,
+    UpdateEmployerView: UpdateEmployerView
   }, dispatch);
 }
 

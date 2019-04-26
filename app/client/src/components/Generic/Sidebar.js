@@ -67,6 +67,7 @@ class Sidebar extends Component {
           <ul className='sidebar-menu scrollable pos-r'>
             <ListItem value='Dashboard' icon='ti-home' />
             {this.renderRelaventPage()}
+            <ListItem value='Profile' icon='ti-share' />
             <ListItem value='Logout' icon='ti-power-off' />
           </ul>
           

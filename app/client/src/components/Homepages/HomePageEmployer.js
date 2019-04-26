@@ -6,6 +6,8 @@ import UniversityAllUploads from './UniversityComponents/DiplomaList';
 import UniversityNewUpload from './UniversityComponents/UniversityNewUpload';
 
 import EmployerDataTable from '../Generic/Tables/EmployerDataTable';
+import Profile from '../Profile'
+import {connect} from 'react-redux'
 
 class HomePageEmployer extends Component{
 
@@ -22,13 +24,30 @@ class HomePageEmployer extends Component{
     componentDidMount(){
     }
 
+    renderRelaventView = () => {
+        console.log("this.props.employerViewUpdate",this.props.employerViewUpdate)
+        if (this.props.employerViewUpdate && this.props.employerViewUpdate.view){
+            if(this.props.employerViewUpdate.view == "Dashboard"){
+                return(
+                    <EmployerDataTable/>
+                );
+                
+            }
+            else{
+                return(
+                    <Profile/>
+                    );
+            }
+        }
+    }
+
     render(){
         return(    
             <div>
             <h4 className="c-grey-900 mT-10 mB-30">Shared Diploma</h4>
             <div className="row">
               <div className="col-md-12">
-                <EmployerDataTable/>
+                {this.renderRelaventView()}
               </div>
             </div>
             </div>          
@@ -38,8 +57,9 @@ class HomePageEmployer extends Component{
 
 function mapStateToProps(state){
   return {
-      userDetail: state.userDetail
+      userDetail: state.userDetail,
+      employerViewUpdate: state.employerViewUpdate
   }
 }
 
-export default withRouter(HomePageEmployer);
+export default connect(mapStateToProps)(HomePageEmployer);

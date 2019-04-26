@@ -29,7 +29,7 @@ class Profile extends Component{
             <div>
                     <div class="layers bd bgc-white p-15">
                       <div class="layer w-100 mB-10">
-                        <h4 class="c-grey-900">Name</h4>
+                        <h4 class="c-grey-900">Email Id</h4>
                         <label>{this.props.userDetail.userName}</label>
                       </div>
                     </div>
@@ -42,6 +42,30 @@ class Profile extends Component{
                     <div class="layers bd bgc-white p-15">
                       <div class="layer w-100 mB-10">
                         <h4 class="c-grey-900">Role</h4>
+                        <label>{this.props.userDetail.role}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ 'width': '5px',
+                  'height': 'auto',
+                  'display': 'inline-block' }} />
+
+                  <div>
+                    <div class="layers bd bgc-white p-15">
+                      <div class="layer w-100 mB-10">
+                        <h4 class="c-grey-900">First Name</h4>
+                        <label>{this.props.userDetail.role}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ 'width': '5px',
+                  'height': 'auto',
+                  'display': 'inline-block' }} />
+
+                  <div>
+                    <div class="layers bd bgc-white p-15">
+                      <div class="layer w-100 mB-10">
+                        <h4 class="c-grey-900">Last Name</h4>
                         <label>{this.props.userDetail.role}</label>
                       </div>
                     </div>
