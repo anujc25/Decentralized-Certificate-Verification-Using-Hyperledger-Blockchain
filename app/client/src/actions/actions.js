@@ -2,6 +2,7 @@ export const SAVE_USER = 'SAVE_USER';
 export const SAVE_EMAILIDS = 'SAVE_EMAILIDS';
 export const UPDATE_UNIVERSITY_VIEW = 'UPDATE_UNIVERSITY_VIEW';
 export const UPDATE_STUDENT_VIEW = 'UPDATE_STUDENT_VIEW';
+export const UPDATE_EMPLOYER_VIEW = 'UPDATE_EMPLOYER_VIEW';
 
 
 export function SaveUser(obj) {
@@ -32,6 +33,14 @@ export function UpdateStudentView(obj) {
     console.log("UpdateStudentView ");
     return {
         type : "UPDATE_STUDENT_VIEW",
+        obj                               // this is same as newItem : newItem in ES6
+    }
+}
+
+export function UpdateEmployerView(obj) {
+    console.log("UpdateEmployerView");
+    return {
+        type : "UPDATE_EMPLOYER_VIEW",
         obj                               // this is same as newItem : newItem in ES6
     }
 }

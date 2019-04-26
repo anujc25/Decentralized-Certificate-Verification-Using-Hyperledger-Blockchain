@@ -6,6 +6,7 @@ import * as BackendAPI from '../../services/backendAPI'
 import { connect } from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {SaveEmailIds} from '../../actions/actions'
+import Profile from '../Profile'
 
 class HomePageUniversity extends Component{
 
@@ -31,9 +32,14 @@ class HomePageUniversity extends Component{
                 );
                 
             }
-            else{
+            else if (this.props.studentViewUpdate.view == "My Emails"){
                 return(
                     <StudentEmailsDataTable/>
+                    );
+            }
+            else{
+                return(
+                    <Profile/>
                     );
             }
         }
