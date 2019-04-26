@@ -221,7 +221,7 @@ public class StudentController {
             throw new AuthenticationException("Incorrect password entered. Cannot authenticate.");
         }
 
-        Map<String, Boolean> studentEmails = new HashMap<>();
+        Map<String, Boolean> studentEmails = student.getSecondaryAccountDetails()
         // verify the matching emailId
         if (studentEmails.get(model.getStudentPrimaryEmail()).equals(Boolean.FALSE)){
             throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
