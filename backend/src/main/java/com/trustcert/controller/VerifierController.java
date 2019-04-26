@@ -52,7 +52,7 @@ public class VerifierController {
     @PostMapping("/verifiers")
     VerifierModel addVerifier(@RequestBody VerifierModel newVerifier) {
 
-        // Adding primary email-id in details while student registers
+        // Adding primary email-id in details while verifier registers
         // This will be required when we want to fetch all the email-ids of the student
         if (!validateRequest(newVerifier)){
             throw new IllegalStudentException("Missing Required Information. Cannot proceed to register.");
@@ -179,7 +179,6 @@ public class VerifierController {
 
         if(verifierModel.getVerifierLastName() == null ||
                 verifierModel.getVerifierFirstName() == null ||
-                verifierModel.getVerifierOrganization() == null ||
                 verifierModel.getVerifierPrimaryEmail() == null ||
                 verifierModel.getPassword() == null)
         {

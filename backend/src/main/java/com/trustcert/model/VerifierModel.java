@@ -17,7 +17,6 @@ public class VerifierModel {
     private String password;
     @JsonIgnore
     private String secret;
-
     private Boolean isVerified = Boolean.FALSE;
 
     VerifierModel(String verifierPrimaryEmail, String verifierFirstName,

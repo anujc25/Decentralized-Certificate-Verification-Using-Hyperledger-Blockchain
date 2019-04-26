@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 public class StudentModel implements Serializable {
@@ -21,9 +20,6 @@ public class StudentModel implements Serializable {
     private String password;
     @JsonIgnore
     private String secret;
-
-//    private Set<StudentDetailModel> secondaryAccountDetails;
-
     private Map<String, Boolean> secondaryAccountDetails;
 
     StudentModel(String studentPrimaryEmail, String studentFirstName, String studentLastName, String password, String secret) {
@@ -75,14 +71,6 @@ public class StudentModel implements Serializable {
     public void setSecret(String secret) {
         this.secret = secret;
     }
-
-//    public Set<StudentDetailModel> getSecondaryAccountDetails() {
-//        return secondaryAccountDetails;
-//    }
-
-//    public void setSecondaryAccountDetails(Set<StudentDetailModel> secondaryAccountDetails) {
-//        this.secondaryAccountDetails = secondaryAccountDetails;
-//    }
 
     public void addSecondaryStudentEmail(String email){
         this.secondaryAccountDetails.put(email,Boolean.FALSE);
