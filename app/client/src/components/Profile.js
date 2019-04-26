@@ -25,7 +25,7 @@ class Profile extends Component{
     render(){
         return(
             <div class="row gap-20 masonry pos-r">
-            <div class="masonry-item col-md-2">
+            <div class="masonry-item col-md-6">
             <div>
                     <div class="layers bd bgc-white p-15">
                       <div class="layer w-100 mB-10">
@@ -54,7 +54,7 @@ class Profile extends Component{
                     <div class="layers bd bgc-white p-15">
                       <div class="layer w-100 mB-10">
                         <h4 class="c-grey-900">First Name</h4>
-                        <label>{this.props.userDetail.role}</label>
+                        <label>{this.props.userDetail.firstName}</label>
                       </div>
                     </div>
                   </div>
@@ -66,14 +66,14 @@ class Profile extends Component{
                     <div class="layers bd bgc-white p-15">
                       <div class="layer w-100 mB-10">
                         <h4 class="c-grey-900">Last Name</h4>
-                        <label>{this.props.userDetail.role}</label>
+                        <label>{this.props.userDetail.lastName}</label>
                       </div>
                     </div>
                   </div>
              </div>  
              
             
-            <div class="masonry-item col-md-4">
+            <div class="masonry-item col-md-6">
                 <div class="bgc-white p-20 bd">
                     <h6 class="c-grey-900">Update Password</h6>
                     <div class="mT-30">

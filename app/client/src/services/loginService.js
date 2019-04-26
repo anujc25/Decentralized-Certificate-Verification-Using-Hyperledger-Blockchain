@@ -69,10 +69,7 @@ export const blockchainLogin = (payload) =>
     .then(res => {
       console.log(res)
       if (!res.error && res.result && res.result.role) {
-        console.log(res.result.role, this.state.role)
-        if (res.result.role === this.state.role) {
-          return true
-        }
+        return true
       }
       return false
     }).catch(error => {

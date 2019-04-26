@@ -4,7 +4,9 @@ const initialState = {
   userName: '',
   role: '',
   isLoggedIn: false,
-  emailIds: ''
+  emailIds: '',
+  firstName: '',
+  lastName: ''
 }
 
 const user = (state = initialState, action) => {
@@ -19,14 +21,13 @@ const user = (state = initialState, action) => {
         isLoggedIn: true,
         emailIds: state.emailIds
       }
-      console.log(state)
+      console.log('REDUCER STATE', state)
       return state
 
     case SAVE_EMAILIDS :
       // return Object.assign({}, state,
       state = {
-        userName: state.userName,
-        role: state.role,
+        ...state,
         emailIds: action.obj.emailIds
       }
       console.log(state)

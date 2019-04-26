@@ -235,7 +235,7 @@ requestLogin = (e) => {
                       onChange={(event) => {
                                   this.setState({
                                           ...this.state,
-                                          secret: event.target.value
+                                          password: event.target.value
                                       });
                                   }}
                     />
