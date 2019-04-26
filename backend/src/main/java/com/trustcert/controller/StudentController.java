@@ -284,7 +284,7 @@ public class StudentController {
             message.setText( "Hello, " +  System.lineSeparator() + System.lineSeparator() + 
                 "Thank you for taking the first step towards securing your certificates." + System.lineSeparator() + 
                 "Please verify your email address by clicking the link below."+ System.lineSeparator() +  
-                "http://localhost:8080/students/verify/"+ encodedIds +  System.lineSeparator() + System.lineSeparator() +
+                "http://ec2-13-52-182-144.us-west-1.compute.amazonaws.com:8080/students/verify/"+ encodedIds +  System.lineSeparator() + System.lineSeparator() +
                 "Regards," + System.lineSeparator() + 
                 "Team TrustCert"
             );

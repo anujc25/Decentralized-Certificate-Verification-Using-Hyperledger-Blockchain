@@ -16,7 +16,6 @@ public class StudentModel implements Serializable {
     private String studentPrimaryEmail; // Primary User Identity
     private String studentFirstName;
     private String studentLastName;
-    @JsonIgnore
     private String password;
 
     private String secret;
@@ -54,7 +53,7 @@ public class StudentModel implements Serializable {
     public void setStudentLastName(String studentLastName) {
         this.studentLastName = studentLastName;
     }
-
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -82,4 +81,5 @@ public class StudentModel implements Serializable {
     public void addSecondaryStudentEmail(String email){
         this.secondaryAccountDetails.add(new StudentDetailModel(email));
     }
+
 }
