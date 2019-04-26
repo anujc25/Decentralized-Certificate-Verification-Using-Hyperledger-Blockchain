@@ -17,13 +17,21 @@ import com.trustcert.blockchain.config.Config;
 import com.trustcert.blockchain.util.Util;
 import com.trustcert.model.UserRolesEnum;
 
+import java.util.HashMap;
+import java.util.Properties;
+
 public class RegisterUser {
 
 	public String registerUser(String primaryEmailId, UserRolesEnum role) {
 		try {
 			Util.cleanUp();
 			String caUrl = Config.CA_ORG1_URL;
-			CAClient caClient = new CAClient(caUrl, null);
+			Properties properties = new Properties();
+
+			String pemFile = "src/main/java/com/trustcert/blockchain/config/admin.pem";
+			properties.setProperty("pemFile",pemFile);
+
+			CAClient caClient = new CAClient(caUrl, properties);
 			// Enroll Admin to Org1MSP
 			UserContext adminUserContext = new UserContext();
 			adminUserContext.setName(Config.ADMIN);

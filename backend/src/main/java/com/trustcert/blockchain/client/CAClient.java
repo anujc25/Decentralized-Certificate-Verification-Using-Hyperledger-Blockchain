@@ -86,7 +86,7 @@ public class CAClient {
 	 * Enroll admin user.
 	 * 
 	 * @param username
-	 * @param passwordregisterUser
+	 * @param password
 	 * @return
 	 * @throws Exception
 	 */

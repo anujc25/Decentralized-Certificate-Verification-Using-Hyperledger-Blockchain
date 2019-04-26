@@ -1,7 +1,9 @@
 package com.trustcert.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,13 +16,12 @@ public class StudentModel implements Serializable {
     private String studentPrimaryEmail; // Primary User Identity
     private String studentFirstName;
     private String studentLastName;
+    @JsonIgnore
     private String password;
 
     private String secret;
 
     private Set<StudentDetailModel> secondaryAccountDetails;
-
-    private Boolean isVerified = Boolean.FALSE;
 
     StudentModel(String studentPrimaryEmail, String studentFirstName, String studentLastName, String password, String secret) {
         this.studentPrimaryEmail = studentPrimaryEmail;
@@ -80,13 +81,5 @@ public class StudentModel implements Serializable {
 
     public void addSecondaryStudentEmail(String email){
         this.secondaryAccountDetails.add(new StudentDetailModel(email));
-    }
-
-    public Boolean getVerified() {
-        return isVerified;
-    }
-
-    public void setVerified(Boolean verified) {
-        isVerified = verified;
     }
 }

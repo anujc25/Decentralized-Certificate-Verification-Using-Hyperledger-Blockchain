@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Config {
 
-	public static final String CA_ORG1_URL = "http://173.193.79.36:31966";
+	public static final String CA_ORG1_URL = "https://173.193.79.36:31966";
 
 	public static final String ADMIN = "admin";
 

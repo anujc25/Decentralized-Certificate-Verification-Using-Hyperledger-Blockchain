@@ -1,6 +1,5 @@
 package com.trustcert.controller;
 
-import com.trustcert.blockchain.user.UserContext;
 import com.trustcert.exceptions.AuthenticationException;
 import com.trustcert.exceptions.IllegalStudentException;
 import com.trustcert.model.PasswordModel;
@@ -12,7 +11,6 @@ import com.trustcert.utility.PasswordEncoderBean;
 import com.trustcert.blockchain.user.RegisterUser;
 import lombok.Data;
 
-import org.springframework.data.mongodb.core.aggregation.BooleanOperators.BooleanOperatorFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,9 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.crypto.Cipher;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -85,7 +75,7 @@ public class StudentController {
         catch(Exception ex){
             throw new IllegalStudentException("Cannot create student identity with email: "+ newStudent.getStudentPrimaryEmail());
         }
-        sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
+//        sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
 
         return repository.save(newStudent);
     }
@@ -152,9 +142,6 @@ public class StudentController {
                     if (newStudent.getStudentLastName()!=null){
                         student.setStudentLastName(newStudent.getStudentLastName());
                     }
-                    if (newStudent.getVerified().equals(Boolean.TRUE)){
-                        student.setVerified(newStudent.getVerified());
-                    }
                     if (newStudent.getSecondaryAccountDetails()!=null && newStudent.getSecondaryAccountDetails().size()!=0){
 
                         if (student.getSecondaryAccountDetails()==null){
@@ -187,7 +174,6 @@ public class StudentController {
             if (student == null){
                 throw new IllegalStudentException("Cannot find student with email: "+ primaryEmailId);
             }
-            
             Set<StudentDetailModel> s = student.getSecondaryAccountDetails();
             // verify the matching emailId
             for (Iterator<StudentDetailModel> i = s.iterator(); i.hasNext();) {
@@ -197,9 +183,7 @@ public class StudentController {
                     break;
                 }
             }
-
             student.setSecondaryAccountDetails(s);
-
             return repository.save(student);
         } catch (Exception e) {
             System.out.println(e);
@@ -230,11 +214,20 @@ public class StudentController {
         if (student == null){
             throw new IllegalStudentException("Cannot find student with email: "+model.getStudentPrimaryEmail());
         }
-        if (student.getVerified() == Boolean.FALSE){
-            throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
-        }
         if (!PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),student.getPassword())){
             throw new AuthenticationException("Incorrect password entered. Cannot authenticate.");
+        }
+
+        Set<StudentDetailModel> s = student.getSecondaryAccountDetails();
+        // verify the matching emailId
+        for (Iterator<StudentDetailModel> i = s.iterator(); i.hasNext();) {
+            StudentDetailModel sd = i.next();
+            if (sd.getEmail().equals(model.getStudentPrimaryEmail())) {
+                if(!sd.getIsVerified()){
+                    throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
+                }
+                break;
+            }
         }
         LoginResponse loginResponse = new LoginResponse(student);
         return loginResponse;
@@ -246,7 +239,7 @@ public class StudentController {
         String secret;
         String firstname;
         String lastName;
-        Set<StudentDetailModel> secondaryAccountDetails;
+        Set<StudentDetailModel> secondaryAccountDetails = new HashSet<>();
 
         LoginResponse(StudentModel studentModel){
             this.studentPrimaryEmail = studentModel.getStudentPrimaryEmail();
