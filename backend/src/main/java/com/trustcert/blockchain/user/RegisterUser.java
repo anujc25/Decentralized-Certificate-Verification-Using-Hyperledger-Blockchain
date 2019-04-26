@@ -15,9 +15,8 @@ package com.trustcert.blockchain.user;
 import com.trustcert.blockchain.client.CAClient;
 import com.trustcert.blockchain.config.Config;
 import com.trustcert.blockchain.util.Util;
-import com.trustcert.model.UserRolesEnum;
+import com.trustcert.utility.UserRolesEnum;
 
-import java.util.HashMap;
 import java.util.Properties;
 
 public class RegisterUser {

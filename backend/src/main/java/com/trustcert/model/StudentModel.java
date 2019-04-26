@@ -6,6 +6,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -17,10 +19,12 @@ public class StudentModel implements Serializable {
     private String studentLastName;
     @JsonIgnore
     private String password;
-
+    @JsonIgnore
     private String secret;
 
-    private Set<StudentDetailModel> secondaryAccountDetails;
+//    private Set<StudentDetailModel> secondaryAccountDetails;
+
+    private Map<String, Boolean> secondaryAccountDetails;
 
     StudentModel(String studentPrimaryEmail, String studentFirstName, String studentLastName, String password, String secret) {
         this.studentPrimaryEmail = studentPrimaryEmail;
@@ -53,6 +57,7 @@ public class StudentModel implements Serializable {
     public void setStudentLastName(String studentLastName) {
         this.studentLastName = studentLastName;
     }
+
     @JsonIgnore
     public String getPassword() {
         return password;
@@ -62,24 +67,35 @@ public class StudentModel implements Serializable {
         this.password = password;
     }
 
+    @JsonIgnore
     public String getSecret() {
         return secret;
     }
-
+    @JsonProperty("secret")
     public void setSecret(String secret) {
         this.secret = secret;
     }
 
-    public Set<StudentDetailModel> getSecondaryAccountDetails() {
-        return secondaryAccountDetails;
-    }
+//    public Set<StudentDetailModel> getSecondaryAccountDetails() {
+//        return secondaryAccountDetails;
+//    }
 
-    public void setSecondaryAccountDetails(Set<StudentDetailModel> secondaryAccountDetails) {
-        this.secondaryAccountDetails = secondaryAccountDetails;
-    }
+//    public void setSecondaryAccountDetails(Set<StudentDetailModel> secondaryAccountDetails) {
+//        this.secondaryAccountDetails = secondaryAccountDetails;
+//    }
 
     public void addSecondaryStudentEmail(String email){
-        this.secondaryAccountDetails.add(new StudentDetailModel(email));
+        this.secondaryAccountDetails.put(email,Boolean.FALSE);
     }
 
+    public void setSecondaryAccountDetails(Map<String, Boolean> secondaryAccountDetails) {
+        if(this.secondaryAccountDetails == null){
+            this.secondaryAccountDetails = new HashMap<>();
+        }
+        this.secondaryAccountDetails.putAll(secondaryAccountDetails);
+    }
+
+    public Map<String, Boolean> getSecondaryAccountDetails() {
+        return secondaryAccountDetails;
+    }
 }

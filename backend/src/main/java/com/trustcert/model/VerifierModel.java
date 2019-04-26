@@ -1,6 +1,7 @@
 package com.trustcert.model;
 
-import com.trustcert.utility.PasswordEncoderBean;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -12,8 +13,9 @@ public class VerifierModel {
     private String verifierFirstName;
     private String verifierLastName;
     private String verifierOrganization;
-
+    @JsonIgnore
     private String password;
+    @JsonIgnore
     private String secret;
 
     private Boolean isVerified = Boolean.FALSE;
@@ -70,18 +72,20 @@ public class VerifierModel {
         isVerified = verified;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
-
+    @JsonProperty("password")
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @JsonIgnore
     public String getSecret() {
         return secret;
     }
-
+    @JsonProperty("secret")
     public void setSecret(String secret) {
         this.secret = secret;
     }

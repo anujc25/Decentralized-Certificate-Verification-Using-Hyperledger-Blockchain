@@ -3,12 +3,12 @@ package com.trustcert.controller;
 import com.trustcert.exceptions.AuthenticationException;
 import com.trustcert.exceptions.IllegalStudentException;
 import com.trustcert.model.PasswordModel;
-import com.trustcert.model.StudentDetailModel;
 import com.trustcert.model.StudentModel;
-import com.trustcert.model.UserRolesEnum;
+import com.trustcert.utility.UserRolesEnum;
 import com.trustcert.repository.StudentRepository;
 import com.trustcert.utility.PasswordEncoderBean;
 import com.trustcert.blockchain.user.RegisterUser;
+
 import lombok.Data;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,13 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.mail.Message;
@@ -57,13 +51,16 @@ public class StudentController {
     @PostMapping("/students")
     StudentModel addStudent(@RequestBody StudentModel newStudent) {
 
-        //TODO: Register User Call Node sdk to do it.
-
         // Adding primary email-id in details while student registers
         // This will be required when we want to fetch all the email-ids of the student
-        StudentDetailModel sd = new StudentDetailModel(newStudent.getStudentPrimaryEmail());
-        Set<StudentDetailModel> s = new HashSet<>();
-        s.add(sd);
+
+        if (!validateRequest(newStudent)){
+            throw new IllegalStudentException("Missing Required Information. Cannot proceed to register.");
+        }
+
+        Map<String,Boolean> s = new HashMap<>();
+        s.put(newStudent.getStudentPrimaryEmail(),Boolean.FALSE);
+
         newStudent.setSecondaryAccountDetails(s);
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
 
@@ -75,7 +72,7 @@ public class StudentController {
         catch(Exception ex){
             throw new IllegalStudentException("Cannot create student identity with email: "+ newStudent.getStudentPrimaryEmail());
         }
-        sendVerificationEmail(newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
+        sendVerificationEmail(newStudent, newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
 
         return repository.save(newStudent);
     }
@@ -92,27 +89,27 @@ public class StudentController {
             throw new IllegalStudentException("Cannot find student with email: "+ studentPrimaryEmail);
         }
 
-        Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
         student.addSecondaryStudentEmail(studentSecondaryEmail);
+        sendVerificationEmail(student, studentPrimaryEmail, studentSecondaryEmail);
 
-        sendVerificationEmail(studentPrimaryEmail, studentSecondaryEmail);
         return repository.save(student);
     }
 
     @GetMapping("/students/email/{studentPrimaryEmail}")
-    Set<StudentDetailModel> getStudentEmailId(@PathVariable String studentPrimaryEmail) {
+    Map<String,Boolean> getStudentEmailIds(@PathVariable String studentPrimaryEmail) {
 
         StudentModel student = repository.findByStudentPrimaryEmail(studentPrimaryEmail);
         if (student == null){
             throw new IllegalStudentException("Cannot find student with email: "+ studentPrimaryEmail);
         }
 
-        Set<StudentDetailModel> studentEmails = student.getSecondaryAccountDetails();
-
+        Map<String,Boolean> studentEmails = student.getSecondaryAccountDetails();
+        Set<String> setKeys = studentEmails.keySet();
         // remove emails that are not verified
-        for (Iterator<StudentDetailModel> i = studentEmails.iterator(); i.hasNext();) {
-            StudentDetailModel sd = i.next();
-            if (!sd.getIsVerified()) {
+
+        for (Iterator<String> i = setKeys.iterator(); i.hasNext();) {
+            String sd = i.next();
+            if (studentEmails.get(sd).equals(Boolean.FALSE)) {
                 i.remove();
             }
         }
@@ -142,19 +139,19 @@ public class StudentController {
                     if (newStudent.getStudentLastName()!=null){
                         student.setStudentLastName(newStudent.getStudentLastName());
                     }
-                    if (newStudent.getSecondaryAccountDetails()!=null && newStudent.getSecondaryAccountDetails().size()!=0){
-
-                        if (student.getSecondaryAccountDetails()==null){
-                            student.getSecondaryAccountDetails().addAll(newStudent.getSecondaryAccountDetails());
-                        }
-                        else {
-                            for(StudentDetailModel sd: newStudent.getSecondaryAccountDetails()){
-                                if (!student.getSecondaryAccountDetails().contains(sd)){
-                                    student.getSecondaryAccountDetails().add(sd);
-                                }
-                            }
-                        }
-                    }
+//                    if (newStudent.getSecondaryAccountDetails()!=null && newStudent.getSecondaryAccountDetails().size()!=0){
+//
+//                        if (student.getSecondaryAccountDetails()==null){
+//                            student.getSecondaryAccountDetails().addAll(newStudent.getSecondaryAccountDetails());
+//                        }
+//                        else {
+//                            for(StudentDetailModel sd: newStudent.getSecondaryAccountDetails()){
+//                                if (!student.getSecondaryAccountDetails().contains(sd)){
+//                                    student.getSecondaryAccountDetails().add(sd);
+//                                }
+//                            }
+//                        }
+//                    }
                     return repository.save(student);
                 })
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
@@ -174,16 +171,17 @@ public class StudentController {
             if (student == null){
                 throw new IllegalStudentException("Cannot find student with email: "+ primaryEmailId);
             }
-            Set<StudentDetailModel> s = student.getSecondaryAccountDetails();
+            Map<String,Boolean> studentEmails = student.getSecondaryAccountDetails();
+            Set<String> s = studentEmails.keySet();
             // verify the matching emailId
-            for (Iterator<StudentDetailModel> i = s.iterator(); i.hasNext();) {
-                StudentDetailModel sd = i.next();
-                if (sd.getEmail().equals(secondaryEmailId)) {
-                    sd.setIsVerified(true);
+            for (Iterator<String> i = s.iterator(); i.hasNext();) {
+                String sd = i.next();
+                if (sd.equals(secondaryEmailId)) {
+                    studentEmails.replace(sd,Boolean.TRUE);
                     break;
                 }
             }
-            student.setSecondaryAccountDetails(s);
+            student.setSecondaryAccountDetails(studentEmails);
             return repository.save(student);
         } catch (Exception e) {
             System.out.println(e);
@@ -218,16 +216,10 @@ public class StudentController {
             throw new AuthenticationException("Incorrect password entered. Cannot authenticate.");
         }
 
-        Set<StudentDetailModel> s = student.getSecondaryAccountDetails();
+        Map<String, Boolean> studentEmails = new HashMap<>();
         // verify the matching emailId
-        for (Iterator<StudentDetailModel> i = s.iterator(); i.hasNext();) {
-            StudentDetailModel sd = i.next();
-            if (sd.getEmail().equals(model.getStudentPrimaryEmail())) {
-                if(!sd.getIsVerified()){
-                    throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
-                }
-                break;
-            }
+        if (studentEmails.get(model.getStudentPrimaryEmail()).equals(Boolean.FALSE)){
+            throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");
         }
         LoginResponse loginResponse = new LoginResponse(student);
         return loginResponse;
@@ -237,22 +229,22 @@ public class StudentController {
     private static class LoginResponse implements Serializable {
         String studentPrimaryEmail;
         String secret;
-        String firstname;
-        String lastName;
-        Set<StudentDetailModel> secondaryAccountDetails = new HashSet<>();
+        String studentFirstName;
+        String studentLastName;
+        Map<String,Boolean> secondaryAccountDetails = new HashMap<>();
 
         LoginResponse(StudentModel studentModel){
             this.studentPrimaryEmail = studentModel.getStudentPrimaryEmail();
             this.secret = studentModel.getSecret();
             if(studentModel.getSecondaryAccountDetails() != null) {
-                this.secondaryAccountDetails.addAll(studentModel.getSecondaryAccountDetails());
+                this.secondaryAccountDetails.putAll(studentModel.getSecondaryAccountDetails());
             }
-            this.firstname = studentModel.getStudentFirstName();
-            this.lastName = studentModel.getStudentLastName();
+            this.studentFirstName = studentModel.getStudentFirstName();
+            this.studentLastName = studentModel.getStudentLastName();
         }
     }
 
-    private Boolean sendVerificationEmail(String primaryEmail, String secondaryEmail) {
+    private Boolean sendVerificationEmail(StudentModel newStudent, String primaryEmail, String secondaryEmail) {
         final String senderUsername = "project.trustcert@gmail.com";
         final String senderPassword = ""; // Add the password for sender email-id
 
@@ -281,12 +273,13 @@ public class StudentController {
                 // InternetAddress.parse(secondaryEmail));
                 InternetAddress.parse(secondaryEmail));
             message.setSubject("TrustCert - Verify your Email Address");
-            message.setText( "Hello, " +  System.lineSeparator() + System.lineSeparator() + 
-                "Thank you for taking the first step towards securing your certificates." + System.lineSeparator() + 
-                "Please verify your email address by clicking the link below."+ System.lineSeparator() +  
-                "http://ec2-13-52-182-144.us-west-1.compute.amazonaws.com:8080/students/verify/"+ encodedIds +  System.lineSeparator() + System.lineSeparator() +
-                "Regards," + System.lineSeparator() + 
-                "Team TrustCert"
+            message.setText( "Hello " +  newStudent.getStudentFirstName() + "," + System.lineSeparator() + System.lineSeparator() +
+                    "Thank you for taking the first step towards securing your certificates." + System.lineSeparator() +
+                    "Please verify your email address by clicking the link below."+ System.lineSeparator() +
+                    "http://ec2-13-52-182-144.us-west-1.compute.amazonaws.com:8080/students/verify/"+ encodedIds +  System.lineSeparator() + System.lineSeparator() +
+                    "Thank you.!" + System.lineSeparator() + System.lineSeparator() +
+                    "Regards," + System.lineSeparator() +
+                    "Team TrustCert"
             );
 
             System.out.println("Done");
@@ -299,5 +292,17 @@ public class StudentController {
             System.out.println(e);
             return false;
         }
+    }
+    private Boolean validateRequest(StudentModel studentModel){
+
+        if(studentModel.getStudentFirstName() == null ||
+           studentModel.getStudentLastName() == null ||
+           studentModel.getStudentPrimaryEmail() == null ||
+           studentModel.getPassword() == null)
+        {
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
     }
 }

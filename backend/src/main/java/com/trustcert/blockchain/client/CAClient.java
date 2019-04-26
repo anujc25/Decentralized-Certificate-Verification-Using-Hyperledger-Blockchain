@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 import com.trustcert.blockchain.user.UserContext;
 import com.trustcert.blockchain.util.Util;
-import com.trustcert.model.UserRolesEnum;
+import com.trustcert.utility.UserRolesEnum;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
