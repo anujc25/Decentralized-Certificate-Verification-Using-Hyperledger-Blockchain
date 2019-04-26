@@ -64,14 +64,6 @@ public class StudentController {
         newStudent.setSecondaryAccountDetails(s);
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
 
-        try{
-            RegisterUser registerUserInstance = new RegisterUser();
-            String eSecret = registerUserInstance.registerUser(newStudent.getStudentPrimaryEmail(), UserRolesEnum.STUDENT);
-            newStudent.setSecret(eSecret);
-        }
-        catch(Exception ex){
-            throw new IllegalStudentException("Cannot create student identity with email: "+ newStudent.getStudentPrimaryEmail());
-        }
         sendVerificationEmail(newStudent, newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
 
         return repository.save(newStudent);
@@ -158,7 +150,7 @@ public class StudentController {
     }
 
     @GetMapping("/students/verify/{encryptedIds}")
-    StudentModel verifyStudentEmailId(@PathVariable String encryptedIds) {
+    String verifyStudentEmailId(@PathVariable String encryptedIds) {
         try {
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] decodedByteArray = decoder.decode(encryptedIds);
@@ -171,6 +163,18 @@ public class StudentController {
             if (student == null){
                 throw new IllegalStudentException("Cannot find student with email: "+ primaryEmailId);
             }
+
+            if (primaryEmailId.equals(secondaryEmailId)){
+                try{
+                    RegisterUser registerUserInstance = new RegisterUser();
+                    String eSecret = registerUserInstance.registerUser(student.getStudentPrimaryEmail(), UserRolesEnum.STUDENT);
+                    student.setSecret(eSecret);
+                }
+                catch(Exception ex){
+                    throw new IllegalStudentException("Cannot create student identity with email: "+ student.getStudentPrimaryEmail()  + ". Verification Failed. Please try again later. Sorry for the inconveniences.");
+                }
+            }
+
             Map<String,Boolean> studentEmails = student.getSecondaryAccountDetails();
             Set<String> s = studentEmails.keySet();
             // verify the matching emailId
@@ -182,10 +186,11 @@ public class StudentController {
                 }
             }
             student.setSecondaryAccountDetails(studentEmails);
-            return repository.save(student);
+            repository.save(student);
+            return "Thank you for verifying.! Now you can login with the application.";
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            return e.getMessage();
         }
     }
 

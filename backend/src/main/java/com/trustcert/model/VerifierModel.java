@@ -20,11 +20,11 @@ public class VerifierModel {
 
     private Boolean isVerified = Boolean.FALSE;
 
-    VerifierModel(String verifierEmail, String verifierFirstName,
+    VerifierModel(String verifierPrimaryEmail, String verifierFirstName,
                   String verifierLastName, String verifierOrganization,
                   String password, String secret) {
 
-        this.verifierPrimaryEmail = verifierEmail;
+        this.verifierPrimaryEmail = verifierPrimaryEmail;
         this.verifierFirstName = verifierFirstName;
         this.verifierLastName = verifierLastName;
         this.verifierOrganization= verifierOrganization;
@@ -32,11 +32,11 @@ public class VerifierModel {
         this.secret = secret;
     }
 
-    public String getVerifierEmail() {
+    public String getVerifierPrimaryEmail() {
         return verifierPrimaryEmail;
     }
 
-    public void setVerifierEmail(String verifierPrimaryEmail) {
+    public void setVerifierPrimaryEmail(String verifierPrimaryEmail) {
         this.verifierPrimaryEmail = verifierPrimaryEmail;
     }
 

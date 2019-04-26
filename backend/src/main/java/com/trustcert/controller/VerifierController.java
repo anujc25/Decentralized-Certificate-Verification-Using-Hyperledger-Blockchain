@@ -57,16 +57,9 @@ public class VerifierController {
         if (!validateRequest(newVerifier)){
             throw new IllegalStudentException("Missing Required Information. Cannot proceed to register.");
         }
+        newVerifier.setSecret(null);
         newVerifier.setPassword(PasswordEncoderBean.passwordEncoder().encode(newVerifier.getPassword()));
-        try{
-            RegisterUser registerUserInstance = new RegisterUser();
-            String eSecret = registerUserInstance.registerUser(newVerifier.getVerifierEmail(), UserRolesEnum.VERIFIER);
-            newVerifier.setSecret(eSecret);
-        }
-        catch(Exception ex){
-            throw new IllegalVerifierException("Cannot create verifier identity with email: "+ newVerifier.getVerifierEmail());
-        }
-        sendVerificationEmail(newVerifier, newVerifier.getVerifierEmail());
+        sendVerificationEmail(newVerifier, newVerifier.getVerifierPrimaryEmail());
         return repository.save(newVerifier);
     }
 
@@ -100,7 +93,7 @@ public class VerifierController {
     }
 
     @GetMapping("/verifiers/verify/{encryptedIds}")
-    VerifierModel verifyVerifierEmailId(@PathVariable String encryptedIds) {
+    String verifyVerifierEmailId(@PathVariable String encryptedIds) {
         try {
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] decodedByteArray = decoder.decode(encryptedIds);
@@ -112,11 +105,22 @@ public class VerifierController {
             if (verifierModel == null){
                 throw new IllegalVerifierException("Cannot find verifier with email: "+ primaryEmailId);
             }
+            try{
+                RegisterUser registerUserInstance = new RegisterUser();
+                String eSecret = registerUserInstance.registerUser(verifierModel.getVerifierPrimaryEmail(), UserRolesEnum.EMPLOYER);
+                verifierModel.setSecret(eSecret);
+            }
+            catch(Exception ex){
+                System.out.print(ex);
+                throw new IllegalVerifierException("Cannot create verifier identity with email: "+ verifierModel.getVerifierPrimaryEmail() + ". Verification Failed. Please try again later. Sorry for the inconveniences.");
+            }
+
             verifierModel.setVerified(Boolean.TRUE);
-            return repository.save(verifierModel);
+            repository.save(verifierModel);
+            return "Thank you for verifying.! Now you can login with the application.";
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+            return e.getMessage();
         }
     }
 
@@ -140,15 +144,15 @@ public class VerifierController {
     @PostMapping("/verifiers/login")
     LoginResponse authenticateEmployer(@RequestBody VerifierModel model) {
 
-        VerifierModel verifierModel = repository.findByVerifierPrimaryEmail(model.getVerifierEmail());
+        VerifierModel verifierModel = repository.findByVerifierPrimaryEmail(model.getVerifierPrimaryEmail());
         if (verifierModel == null){
-            throw new IllegalVerifierException("Cannot find verifier with email: "+model.getVerifierEmail());
+            throw new IllegalVerifierException("Cannot find verifier with email: "+model.getVerifierPrimaryEmail());
         }
         if (!PasswordEncoderBean.passwordEncoder().matches(model.getPassword(),verifierModel.getPassword())){
             throw new IllegalVerifierException("Incorrect password entered. Cannot authenticate.");
         }
         if (verifierModel.getVerified() == Boolean.FALSE){
-            throw new IllegalVerifierException("Verifier with email: " + model.getVerifierEmail() + " is not verified.");
+            throw new IllegalVerifierException("Verifier with email: " + model.getVerifierPrimaryEmail() + " is not verified.");
         }
         LoginResponse loginResponse = new LoginResponse(verifierModel);
         return loginResponse;
@@ -166,7 +170,7 @@ public class VerifierController {
             this.verifierFirstName = verifierModel.getVerifierFirstName();
             this.verifierLastName = verifierModel.getVerifierLastName();
             this.verifierOrganization = verifierModel.getVerifierOrganization();
-            this.verifierPrimaryEmail = verifierModel.getVerifierEmail();
+            this.verifierPrimaryEmail = verifierModel.getVerifierPrimaryEmail();
             this.secret = verifierModel.getSecret();
         }
     }
@@ -176,12 +180,11 @@ public class VerifierController {
         if(verifierModel.getVerifierLastName() == null ||
                 verifierModel.getVerifierFirstName() == null ||
                 verifierModel.getVerifierOrganization() == null ||
-                verifierModel.getVerifierEmail() == null ||
+                verifierModel.getVerifierPrimaryEmail() == null ||
                 verifierModel.getPassword() == null)
         {
             return Boolean.FALSE;
         }
-
         return Boolean.TRUE;
     }
 
@@ -215,8 +218,8 @@ public class VerifierController {
                     InternetAddress.parse(primaryEmail));
             message.setSubject("TrustCert - Verify your Email Address");
             message.setText( "Hello, " +  verifierModel.getVerifierFirstName() + ","+  System.lineSeparator() + System.lineSeparator() +
-                    "Thank you for taking the your time to register with TrustCert Certificate Verification Service." + System.lineSeparator() +
-                    "We aim to provide the verifiers with the quickest way and most easy way to verify applicant's certificates."+ System.lineSeparator() +
+                    "Thank you for taking your time to register with TrustCert Certificate Verification Service." + System.lineSeparator() +
+                    "We aim to provide the verifiers with the quickest and easiest way to verify applicant's certificates."+ System.lineSeparator() +
                     "We hope you enjoy our service and save your precious time. We would like you to please verify your email address."+ System.lineSeparator() +
                     "Please verify your email address by clicking the link below."+ System.lineSeparator() +
                     "http://ec2-13-52-182-144.us-west-1.compute.amazonaws.com:8080/verifiers/verify/"+ encodedIds +  System.lineSeparator() + System.lineSeparator() +

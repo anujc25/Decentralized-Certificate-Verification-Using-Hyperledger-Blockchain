@@ -1,7 +1,7 @@
 package com.trustcert.utility;
 
 public enum UserRolesEnum {
-    VERIFIER,
+    EMPLOYER,
     STUDENT,
     UNIVERSITY
 }
