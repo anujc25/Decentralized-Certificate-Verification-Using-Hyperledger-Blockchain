@@ -206,8 +206,8 @@ class Login extends Component {
     return (
 
     <div className='peers ai-s'>
-        <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-        
+      <form encType="multipart/form-data" onSubmit={this.onSubmit}>
+      
         <div className="form-group row">
           <label for="inputPassword3" class="col-sm-2 col-form-label">Username</label>
           <div className="col-sm-10">
@@ -270,13 +270,13 @@ class Login extends Component {
           </div>
         </fieldset>
 
-      <div className="form-group row">
-          <div className="col-sm-10">
-            <button type="text" className="btn btn-primary" onClick={this.requestLogin} >Login</button>
-          </div>
-        </div>
-
       </form>
+      <div className="form-group row">
+        <div className="col-sm-10">
+          <button type="text" className="btn btn-primary" onClick={this.requestLogin} >Login</button>
+        </div>
+      </div>
+
 
         <h4 className='fw-300 c-grey-900 mB-40'>{this.state.loginError}</h4>
           
