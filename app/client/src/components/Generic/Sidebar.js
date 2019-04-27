@@ -7,7 +7,6 @@ class Sidebar extends Component {
   componentDidMount () {
   }
 
-
   renderRelaventPage = () => {
     console.log(this.props.userDetail)
     if (this.props.userDetail && this.props.userDetail.role){
@@ -44,7 +43,7 @@ class Sidebar extends Component {
                   <div className='peers ai-c fxw-nw'>
                     <div className='peer'>
                       <div className='logo'>
-                        <img src='/logo.svg' alt='' />
+                        <img src='/logo.png' alt='' />
                       </div>
                     </div>
                     <div className='peer peer-greed'>
@@ -66,7 +65,7 @@ class Sidebar extends Component {
           <ul className='sidebar-menu scrollable pos-r'>
             <ListItem value='Dashboard' icon='c-blue-500 ti-home' />
             {this.renderRelaventPage()}
-            <ListItem value='Profile' icon='c-blue-500 ti-share' />
+            <ListItem value='Profile' icon='c-blue-500 ti-user' />
             <ListItem value='Logout' icon='c-red-500 ti-power-off' />
           </ul>
           
@@ -78,7 +77,8 @@ class Sidebar extends Component {
 
 function mapStateToProps (state) {
   return {
-    userDetail: state.userDetail
+    userDetail: state.userDetail,
+    studentViewUpdate: state.studentViewUpdate
   }
 }
 

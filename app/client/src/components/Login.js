@@ -85,8 +85,8 @@ class Login extends Component {
           if (res){
             var obj = {
               userName: res.universityPrimaryEmail,
-              firstName: res.universityFirstName,
-              lastName: res.universityLastName,
+              firstName: res.universityName,
+              lastName: "",
               role: 'UNIVERSITY'
             }
             userInfo = obj          

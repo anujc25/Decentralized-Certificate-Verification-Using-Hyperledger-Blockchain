@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
-
-import ApplySideBarProperties from '../../assets/scripts/sidebar/index.js'
-
+import { ApplySideBarProperties } from '../../assets/scripts/sidebar/index.js'
+import { UpdateActiveLink } from '../../assets/scripts/sidebar/updateActive'
 class HeaderNavBar extends Component {
   componentDidMount () {
     ApplySideBarProperties()
+    UpdateActiveLink('Dashboard')
   }
 
   render () {
@@ -19,15 +19,6 @@ class HeaderNavBar extends Component {
                 <a id='sidebar-toggle' className='sidebar-toggle' href='javascript:void(0);'>
                   <i className='ti-menu' />
                 </a>
-              </li>
-              <li className='search-box'>
-                <a className='search-toggle no-pdd-right' href='javascript:void(0);'>
-                  <i className='search-icon ti-search pdd-right-10' />
-                  <i className='search-icon-close ti-close pdd-right-10' />
-                </a>
-              </li>
-              <li className='search-input'>
-                <input className='form-control' type='text' placeholder='Search...' />
               </li>
             </ul>
             <ul className='nav-right'>
