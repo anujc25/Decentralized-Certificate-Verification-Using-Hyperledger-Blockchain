@@ -37,12 +37,14 @@ class StudentDataTable extends Component {
         var studentEmailIds = ""
         var ids = []
 
-        if (res && res.length > 0) {
-            res.map((e) => {
-                ids.push(e.email)
-                studentEmailIds += e.email
-                studentEmailIds += ","
+        if (res) {
+          ids = Object.keys(res)
+          if (ids && ids.length > 0) {
+            ids.map((id) => {
+              studentEmailIds += id
+              studentEmailIds += ","
             })
+          }
         }
 
         // get diploma for emailIds
