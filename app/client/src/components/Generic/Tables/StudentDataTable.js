@@ -154,6 +154,7 @@ class StudentDataTable extends Component {
                 <th>Timestamp</th>
                 <th>Download</th>
                 <th>Share</th>
+                <th>Preview</th>
               </tr>
             </thead>
             <tbody>              

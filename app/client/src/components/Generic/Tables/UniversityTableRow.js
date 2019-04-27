@@ -27,7 +27,7 @@ class UniversityTableRow extends Component {
         <td>{this.props.diploma.degree}</td>
         <td>{this.props.diploma.term}</td>
         <td>{(new Date(this.props.diploma.timestamp)).toLocaleString()}</td>
-        <td> <button className="btn cur-p btn-primary" onClick={this.downloadDiploma}><i className="c-white-500 ti-download" /> </button></td>
+        <td style={{textAlign:"center"}}> <button className="btn cur-p btn-primary" onClick={this.downloadDiploma}><i className="c-white-500 ti-download" /> </button></td>
       </tr>
     )
   }
