@@ -107,8 +107,7 @@ class Login extends Component {
         })
         .then((res) => {
           if(res) {
-            this.props.SaveUser(userInfo)
-            this.props.history.push('/homepage')
+            this.loginSuccessful(userInfo)
           }
           else if (bShowError){
             this.setState({
@@ -148,8 +147,7 @@ class Login extends Component {
         })
         .then((res) => {
           if(res) {
-            this.props.SaveUser(userInfo)
-            this.props.history.push('/homepage')
+            this.loginSuccessful(userInfo)
           }
           else if (bShowError){
             this.setState({
@@ -157,7 +155,7 @@ class Login extends Component {
               loginError: "Login failed"
             });
           }
-        });
+        });        
     }
   
     doEmployerLogin(payload, bShowError) {
@@ -189,8 +187,7 @@ class Login extends Component {
         })
         .then((res) => {
           if(res) {
-            this.props.SaveUser(userInfo)
-            this.props.history.push('/homepage')
+            this.loginSuccessful(userInfo)            
           }
           else if (bShowError){
             this.setState({
@@ -200,6 +197,14 @@ class Login extends Component {
           }
         });
     }
+
+  loginSuccessful(userInfo){
+    localStorage.setItem("userName", userInfo.userName);
+    localStorage.setItem("password", this.state.password);
+    localStorage.setItem("role", userInfo.role);    
+    this.props.SaveUser(userInfo)
+    this.props.history.push('/homepage')
+  }
 
   render () {
     console.log(this.state)

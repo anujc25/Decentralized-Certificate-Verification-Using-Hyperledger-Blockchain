@@ -72,7 +72,7 @@ class ListItem extends Component {
     }
   }
   render () {
-    let cssClass = 'c-blue-500 ' + this.props.icon
+    let cssClass = this.props.icon
     return (
       <li className='nav-item mT-30 c-pointer active' onClick={this.changeViewFunction} >
         <a className='sidebar-link'>

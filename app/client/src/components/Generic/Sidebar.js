@@ -9,19 +9,18 @@ class Sidebar extends Component {
 
 
   renderRelaventPage = () => {
-    console.log("Inside the SideBar Page")
     console.log(this.props.userDetail)
     if (this.props.userDetail && this.props.userDetail.role){
         
         switch(this.props.userDetail.role){
             case 'UNIVERSITY':
                 return(
-                  <ListItem value='Upload Diploma' icon='ti-share' />
+                  <ListItem value='Upload Diploma' icon='c-blue-500 ti-share' />
                 );
                 break;
             case 'STUDENT':
                 return(
-                  <ListItem value='My Emails' icon='ti-share' />
+                  <ListItem value='My Emails' icon='c-blue-500 ti-share' />
                 );
                 break;
            
@@ -65,10 +64,10 @@ class Sidebar extends Component {
           </div>
 
           <ul className='sidebar-menu scrollable pos-r'>
-            <ListItem value='Dashboard' icon='ti-home' />
+            <ListItem value='Dashboard' icon='c-blue-500 ti-home' />
             {this.renderRelaventPage()}
-            <ListItem value='Profile' icon='ti-share' />
-            <ListItem value='Logout' icon='ti-power-off' />
+            <ListItem value='Profile' icon='c-blue-500 ti-share' />
+            <ListItem value='Logout' icon='c-red-500 ti-power-off' />
           </ul>
           
         </div>
