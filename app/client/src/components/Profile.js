@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom'
 import {connect} from 'react-redux'
+import * as API from '../services/backendAPI'
 
 class Profile extends Component{
  
@@ -12,14 +13,37 @@ class Profile extends Component{
 
     onSubmit = (e) => {
         let payload;
+        let url;
+
+        if(this.props.userDetail.role == "STUDENT"){
+            url = "/students/"+this.props.userDetail.userName+"/passwordchange"
+        } 
+        else if(this.props.userDetail.role == "UNIVERSITY"){
+            url = "/students/"+this.props.userDetail.userName+"/passwordchange"
+        }
+        else{
+            url = "/students/"+this.props.userDetail.userName+"/passwordchange"
+        }
         payload = {
             "oldPassword":this.state.oldPassword,
             "newPassword":this.state.newPassword
         }
-        console.log("Payload:",payload)
-        this.setState({
-            message: "Password Changed successfully",
-        }); 
+
+        API.updatePassword(url,payload)
+            .then((res) => {
+                console.log(res);
+                if ("Jay" == "Jay"){
+                    this.setState({
+                        message: "Password Changed successfully",
+                    }); 
+                }
+                else{
+                    this.setState({
+                        message: "Password Changed Failed",
+                    }); 
+                }
+            })
+        
     }
 
     render(){
