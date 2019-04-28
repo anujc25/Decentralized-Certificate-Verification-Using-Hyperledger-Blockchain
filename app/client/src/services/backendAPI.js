@@ -1,4 +1,4 @@
-const backendApi = process.env.REACT_APP_CONTACTS_API_URL || 'http://ec2-54-188-150-182.us-west-2.compute.amazonaws.com:8080'
+const backendApi = process.env.REACT_APP_CONTACTS_API_URL || 'http://ec2-13-52-182-144.us-west-1.compute.amazonaws.com:8080'
 // const backendApi = process.env.REACT_APP_CONTACTS_API_URL || 'http://localhost:8080'
 
 const headers = {
@@ -37,8 +37,34 @@ export const addStudentEmailId = (payload) =>
       return error
     })
 
+
 export const updatePassword = (url,payload) =>
   fetch(`${backendApi+url}`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload.body)
+  })
+  .then(res => {
+    return res
+  }).catch(error => {
+    console.log('This is error', error)
+    return error
+  })
+
+
+export const registerUser = (payload) => {
+  var route = ""
+  if (payload.role == "STUDENT") {
+    route = `${backendApi}/students/`
+  }
+  else if (payload.role == "EMPLOYER") {
+    route = `${backendApi}/verifiers/`
+  }
+  fetch(route, {
+
     method: 'POST',
     headers: {
       ...headers,
@@ -52,3 +78,6 @@ export const updatePassword = (url,payload) =>
       console.log('This is error', error)
       return error
     })
+  }
+
+
