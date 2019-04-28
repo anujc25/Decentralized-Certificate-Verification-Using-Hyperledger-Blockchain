@@ -229,7 +229,7 @@ class Login extends Component {
         <div className="form-group row">
           <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
           <div className="col-sm-10">
-            <input type="text" class="form-control" id="studentEmail" placeholder="Enter Secret"
+            <input type="text" class="form-control" id="studentEmail" placeholder="Enter Password"
                     onChange={(event) => {
                                 this.setState({
                                         ...this.state,
