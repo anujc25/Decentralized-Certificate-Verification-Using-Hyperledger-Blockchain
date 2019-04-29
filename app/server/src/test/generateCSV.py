@@ -33,14 +33,14 @@ with open('data.csv', mode='w') as csv_file:
     writer = csv.DictWriter(csv_file, fieldnames=columnNames)
 
     writer.writeheader()
-
+    n = input("enter number of certificates to upload")
     student_name_prefix = "test_"
     issuer_name_prefix = "iamanujchaudhari@gmail.com"
     selected_file_prefix = "./resources/sample_pdf.pdf"
     student_email_suffix = "@gmail.com"
     student_email_prefix = "tejaspanchal49"
 
-    for i in range(1,100):
+    for i in range(1,n):
         rowValue = dict()
         rowValue["studentName"] = student_name_prefix + str(i)
         rowValue["issuer"] = issuer_name_prefix
