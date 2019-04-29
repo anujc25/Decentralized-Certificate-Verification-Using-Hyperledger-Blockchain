@@ -63,10 +63,11 @@ public class StudentController {
 
         newStudent.setSecondaryAccountDetails(s);
         newStudent.setPassword(PasswordEncoderBean.passwordEncoder().encode(newStudent.getPassword()));
+        StudentModel model = repository.save(newStudent);
 
         sendVerificationEmail(newStudent, newStudent.getStudentPrimaryEmail(), newStudent.getStudentPrimaryEmail());
 
-        return repository.save(newStudent);
+        return model;
     }
 
     @PostMapping("/students/email")
