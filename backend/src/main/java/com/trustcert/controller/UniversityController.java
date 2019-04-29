@@ -69,11 +69,15 @@ public class UniversityController {
     }
 
     @PutMapping("/universities/{email}/register")
-    UniversityModel registerUniversity(@RequestBody UniversityModel newUniversity, @PathVariable String email) {
+    String registerUniversity(@RequestBody UniversityModel newUniversity, @PathVariable String email) {
 
         return repository.findById(email)
                 .map(universityModel-> {
                     try{
+                        if (universityModel.getVerified().equals(Boolean.TRUE)){
+                            return "Oops.! It looks like you have already verified with TrustCert. Please login with the application.";
+                        }
+
                         RegisterUser registerUserInstance = new RegisterUser();
                         String eSecret = registerUserInstance.registerUser(universityModel.getUniversityPrimaryEmail(), UserRolesEnum.UNIVERSITY);
                         universityModel.setSecret(eSecret);
@@ -83,7 +87,8 @@ public class UniversityController {
                         System.out.print(ex);
                         throw new IllegalUniversityException("Cannot create university identity with email: "+ universityModel.getUniversityPrimaryEmail() + ". Verification Failed. Please try again later. Sorry for the inconveniences.");
                     }
-                    return repository.save(universityModel);
+                    repository.save(universityModel);
+                    return "Thank you for verifying.! Now you can login with the application.";
                 })
                 .orElseThrow(() -> new IllegalUniversityException("Cannot find university with email: "+ email));
     }

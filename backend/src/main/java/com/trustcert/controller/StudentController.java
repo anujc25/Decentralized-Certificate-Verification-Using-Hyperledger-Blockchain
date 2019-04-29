@@ -131,19 +131,6 @@ public class StudentController {
                     if (newStudent.getStudentLastName()!=null){
                         student.setStudentLastName(newStudent.getStudentLastName());
                     }
-//                    if (newStudent.getSecondaryAccountDetails()!=null && newStudent.getSecondaryAccountDetails().size()!=0){
-//
-//                        if (student.getSecondaryAccountDetails()==null){
-//                            student.getSecondaryAccountDetails().addAll(newStudent.getSecondaryAccountDetails());
-//                        }
-//                        else {
-//                            for(StudentDetailModel sd: newStudent.getSecondaryAccountDetails()){
-//                                if (!student.getSecondaryAccountDetails().contains(sd)){
-//                                    student.getSecondaryAccountDetails().add(sd);
-//                                }
-//                            }
-//                        }
-//                    }
                     return repository.save(student);
                 })
                 .orElseThrow(() -> new IllegalStudentException("Cannot find student with email: "+ email));
@@ -165,6 +152,9 @@ public class StudentController {
             }
 
             if (primaryEmailId.equals(secondaryEmailId)){
+                if (student.getSecondaryAccountDetails().get(primaryEmailId).equals(Boolean.TRUE)){
+                    return "Oops.! It looks like you have already verified with TrustCert. Please login with the application.";
+                }
                 try{
                     RegisterUser registerUserInstance = new RegisterUser();
                     String eSecret = registerUserInstance.registerUser(student.getStudentPrimaryEmail(), UserRolesEnum.STUDENT);
@@ -221,7 +211,7 @@ public class StudentController {
             throw new AuthenticationException("Incorrect password entered. Cannot authenticate.");
         }
 
-        Map<String, Boolean> studentEmails = student.getSecondaryAccountDetails()
+        Map<String, Boolean> studentEmails = student.getSecondaryAccountDetails();
         // verify the matching emailId
         if (studentEmails.get(model.getStudentPrimaryEmail()).equals(Boolean.FALSE)){
             throw new IllegalStudentException("Student with email: " + model.getStudentPrimaryEmail() + " is not verified.");

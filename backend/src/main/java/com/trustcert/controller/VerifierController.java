@@ -55,7 +55,7 @@ public class VerifierController {
         // Adding primary email-id in details while verifier registers
         // This will be required when we want to fetch all the email-ids of the student
         if (!validateRequest(newVerifier)){
-            throw new IllegalStudentException("Missing Required Information. Cannot proceed to register.");
+            throw new IllegalVerifierException("Missing Required Information. Cannot proceed to register.");
         }
         newVerifier.setSecret(null);
         newVerifier.setPassword(PasswordEncoderBean.passwordEncoder().encode(newVerifier.getPassword()));
@@ -106,6 +106,9 @@ public class VerifierController {
                 throw new IllegalVerifierException("Cannot find verifier with email: "+ primaryEmailId);
             }
             try{
+                if (verifierModel.getVerified().equals(Boolean.TRUE)){
+                    return "Oops.! It looks like you have already verified with TrustCert. Please login with the application.";
+                }
                 RegisterUser registerUserInstance = new RegisterUser();
                 String eSecret = registerUserInstance.registerUser(verifierModel.getVerifierPrimaryEmail(), UserRolesEnum.EMPLOYER);
                 verifierModel.setSecret(eSecret);
