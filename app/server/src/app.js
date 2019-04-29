@@ -24,6 +24,7 @@ app.use('/university', universityRoutes)
 app.use('/student', studentRoutes)
 app.use('/employer', employeeRoutes)
 app.use('/', commonRoutes)
+app.use(express.static('public'))
 
 ipfs.startIPFSNode(function () {
   console.log('Starting Node Server ...')

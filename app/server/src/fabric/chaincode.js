@@ -128,7 +128,7 @@ exports.shareDiplomaWithEmployer = async function (userName, employerEmail, dipl
     }
 
     result = await result.contract.submitTransaction('shareDiploma', employerEmail, diplomaUuid)
-    
+
     var jsonResult = JSON.parse(result.toString())
     console.log('shareDiploma result:', jsonResult)
     return jsonResult
@@ -156,6 +156,32 @@ exports.queryDiplomaForEmployer = async function (userName) {
     }
     jsonResult.result = arrDiploma
     console.log('getDiploma2:', jsonResult)
+    return jsonResult
+  } catch (error) {
+    console.error(`Failed to evaluate transaction: ${error}`)
+    return ''
+  }
+}
+
+exports.getDimplomaHistory = async function (userName, uuid) {
+  try {
+    var response = { result: null, error: null }
+    var result = await getContract(userName)
+    if (result.error) {
+      response.error = result.error
+      return response
+    }
+    // addDiploma transaction - requires arguments [UUID, term, degree, dept, name, email, ipfslink]
+    result = await result.contract.submitTransaction('getDiplomaHistory', uuid)
+
+    var jsonResult = JSON.parse(result.toString())
+    var arrDiplomaInfo = []
+    for (var i = 0; i < jsonResult.result.length; i++) {
+      arrDiplomaInfo.push(JSON.parse(jsonResult.result[i]))
+    }
+    jsonResult.result = arrDiplomaInfo
+
+    console.log('getDiplomaHistory result:', result)
     return jsonResult
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`)

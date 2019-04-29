@@ -5,6 +5,10 @@ import '../../css/offCanvas.css';
 import UniversityAllUploads from './UniversityComponents/DiplomaList';
 import UniversityNewUpload from './UniversityComponents/UniversityNewUpload';
 
+import UniversityDataTable from '../Generic/Tables/UniversityDataTable';
+import Profile from '../Profile'
+import {connect} from 'react-redux'
+
 class HomePageUniversity extends Component{
 
     state = {
@@ -17,37 +21,48 @@ class HomePageUniversity extends Component{
         });
     }
 
+    componentDidMount(){
+    }
+
+    renderRelaventView = () => {
+        console.log("this.props.universityViewUpdate",this.props.universityViewUpdate)
+        if (this.props.universityViewUpdate && this.props.universityViewUpdate.view){
+            if(this.props.universityViewUpdate.view == "Dashboard"){
+                return(
+                    <UniversityDataTable/>
+                );
+                
+            }
+            else if (this.props.universityViewUpdate.view == "Upload Diploma"){
+                return(
+                    <UniversityNewUpload/>
+                    );
+            }
+            else{
+                return(
+                    <Profile/>
+                    );
+            }
+        }
+    }
+
     render(){
-        return(
-            <div className="container">
-        
-                <section className="jumbotron text-center">
-                    <div className="container">
-                        <h1 className="jumbotron-heading text-muted">University Page</h1>
-                        <p className="lead text-muted">Click on upload button to upload a new certificate</p>
-                        <p>
-                            {/* <a className="btn btn-primary my-2" onClick={() => this.props.history.push('/homepage/university/uploadcertificate')}>Upload New Certificate</a> */}
-                            <a className="btn btn-primary my-2" onClick={this.togglePopup.bind(this)}>Upload Certificate</a>
-                            {/* <button onClick={this.togglePopup.bind(this)}>show popup</button> */}
-                            <a className="btn btn-primary my-2" onClick={() => this.props.history.push('/')}>Logout</a>
-                        </p>
-                    </div>
-                </section>
-
-                <div class="media text-muted pt-1">
-                        Issued Diploma
-                </div>
-
-                <UniversityAllUploads role="UNIVERSITY"/>
-
-                {this.state.showUploadDiplomaPopuup ? 
-                    <UniversityNewUpload closeUploadPopup={this.togglePopup.bind(this)}/>
-                    : null
-                }
-
-            </div>    
+        return(    
+            <div>
+            <div className="row">
+              <div className="col-md-12">
+                {this.renderRelaventView()}
+              </div>
+            </div>
+            </div>          
         );
     }
 }
 
-export default withRouter(HomePageUniversity);
+function mapStateToProps(state){
+  return {
+    universityViewUpdate: state.universityViewUpdate
+  }
+}
+
+export default withRouter(connect(mapStateToProps)(HomePageUniversity))

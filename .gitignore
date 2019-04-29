@@ -2,3 +2,4 @@ chaincode/bin
 certificates
 users
 bin
+*.pem

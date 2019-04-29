@@ -72,6 +72,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.fetchUserRole(APIstub)
 	} else if function == "shareDiploma" {
 		return s.shareDiploma(APIstub, args)
+	} else if function == "getDiplomaHistory" {
+		return s.getDiplomaHistory(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
@@ -429,6 +431,38 @@ func (s *SmartContract) shareDiploma(APIstub shim.ChaincodeStubInterface, args [
 		response.Error = err.Error()
 		return sendResponse(response, false)
 	}
+	return sendResponse(response, true)
+}
+
+// getDiplomaHistory
+// 	0
+// [key]
+func (s *SmartContract) getDiplomaHistory(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+	response := Response{}
+
+	if len(args) != 1 {
+		response.Error = "Incorrect number of arguments. Expecting 1"
+		return sendResponse(response, false)
+	}
+
+	combinedResult := []string{}
+
+	historyIterator, err := APIstub.GetHistoryForKey(args[0])
+	if err != nil {
+		response.Error = err.Error()
+		return sendResponse(response, false)
+	}
+	defer historyIterator.Close()
+
+	for historyIterator.HasNext() {
+		modification, err := historyIterator.Next()
+		if err != nil {
+			response.Error = err.Error()
+			return sendResponse(response, false)
+		}
+		combinedResult = append(combinedResult, string(modification.Value))
+	}
+	response.Result = combinedResult
 	return sendResponse(response, true)
 }
 
