@@ -70,11 +70,12 @@ export const registerUser = (payload) => {
       ...headers,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload.body)
   })
-    .then(res => {
-      return res
-    }).catch(error => {
+  .then(res => res.json())
+  .then(res => {
+    return res
+  }).catch(error => {
       console.log('This is error', error)
       return error
     })

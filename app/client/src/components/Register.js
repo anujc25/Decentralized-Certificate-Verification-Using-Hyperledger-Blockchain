@@ -177,14 +177,16 @@ doRegister = (payload, bShowError) => {
             </div>
         </div>
 
-        <div className="form-group row">
-            <div className="col-sm-12">
-              <button type="submit" className="btn btn-primary" onClick={this.requestRegister} >Register</button>
-            </div>
-        </div>
+        
 
           
         </form>
+
+        <div className="form-group row">
+            <div className="col-sm-12">
+              <button className="btn btn-primary" onClick={this.requestRegister} >Register</button>
+            </div>
+        </div>
 
         <h4 className='fw-300 c-grey-900 mB-40'>{this.state.loginError}</h4>
           
