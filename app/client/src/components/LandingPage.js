@@ -1,125 +1,66 @@
 import React, { Component } from 'react'
-import {bindActionCreators} from 'redux'
-import { Route, Link, Switch, Redirect,withRouter, BrowserRouter } from 'react-router-dom'
-import '../css/cover.css'
+import { bindActionCreators } from 'redux'
+import { Route, Link, Switch, Redirect, withRouter, BrowserRouter } from 'react-router-dom'
+import '../css/1.css'
+import '../css/2.css'
+import '../css/3.css'
+import '../css/4.css'
 import * as API from './../services/loginService'
-import {SaveUser} from '../actions/actions'
-import {connect} from 'react-redux'
+import { SaveUser } from '../actions/actions'
+import { connect } from 'react-redux'
+import img1 from '../images/bg1.jpg'
+import user from '../reducers/reducer-user';
+import Login from './Login'
+import Register from './Register'
 
 class LandingPage extends Component {
 
   state = {
-    loginError: '',
-    username: '',
-    secret: '' ,
-    role: 'STUDENT'   
+    isLoginPage: true   
 }
 
-  doLogin = (e) => {
-
-  var payload = {
-      username: this.state.username,
-      secret : this.state.secret,
-      role : this.state.role
-  }
-
-  API.universityLogin(payload)
-      .then((res) => {
-        console.log(res);
-        if (!res.error && res.result && res.result.role) {
-          if (res.result.role != ''){
-            var obj = {
-              userName: this.state.username,
-              role: this.state.role
-            }
-            this.props.SaveUser(obj)
-            this.props.history.push('/homepage/' + res.result.role)
-          }
-          else {
-            this.setState({
-              loginError: "Login Failed. " + res.error,
-            });
-          }
-        } else {
-          this.setState({
-            loginError: "Login Failed. " + res.error,
-          });            
-        }
-      });
-  }
-
+componentWillMount(){  
+}
   render () {
+    console.log(this.state)
     return (
-    // <div classNameName="container">
-    //     <div classNameName="row">
-    //     <button type="text" className="btn btn-primary" onClick={() => this.props.history.push("/registeruniversity")}>Register</button>
-    //     <button type="text" className="btn btn-primary" onClick={() => this.props.history.push("/homepage")}>Login</button>
 
-    //     </div>
+    <div className='peers ai-s fxw-nw h-100vh'>
+      <div className='d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv' style={{ 'background-image': `url(${img1})` }}>
+       
+      <div className='col-4 col-md-4 offset-md-8 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r' style={{ 'min-width': '320px;', 'opacity': '0.9' }}>
 
-    // </div>
-
-      <div classNameName='site-wrapper'>
-
-        <div classNameName='site-wrapper-inner'>
-
-          <div className='cover-container'>
-            <main role='main' className='inner cover'>
-              <h1 className='cover-heading'>TrustCert</h1>
-              <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-                <label for="issuer">Username</label>
-                <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Username"
-                    onChange={(event) => {
-                    this.setState({
-                            ...this.state,
-                            username: event.target.value
-                        });
-                    }}
-                >
-                </input>
-                <label for="issuer">Secret</label>
-                <input type="text" className="form-control" id="studentEmail"  placeholder="Enter Secret"
-                    onChange={(event) => {
-                    this.setState({
-                            ...this.state,
-                            secret: event.target.value
-                        });
-                    }}
-                >
-                </input>
-                <label for="issuer">Role</label>
-                <select name="role" onChange={(event) => {
-                    this.setState({
-                      ...this.state,
-                      role: event.target.value
-                    })
-                }}>
-                  <option value="STUDENT">STUDENT</option>
-                  <option value="UNIVERSITY">UNIVERSITY</option>
-                  <option value="EMPLOYER">EMPLOYER</option>
-                </select>
-              </form>
-              <p className='lead'>
-                <button type='text' className='btn btn-primary' onClick={() => this.props.history.push('/registeruniversity')}>Register</button>
-
-                <div style={{ 'width': '5px',
-                  'height': 'auto',
-                  'display': 'inline-block' }} />
-
-                <button type='text' className='btn btn-primary' onClick={this.doLogin}>Login</button>
-              </p>
-              <p className='lead'>
-              {this.state.loginError}
-              </p>
-            </main>
-
-
-
-          </div>
-
-        </div>
-
+        <h2 className='fw-300 c-grey-900 mB-40'>Welcome to TrustCert</h2>
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a id="liLogin" className="nav-link active" href="#" onClick={() => {
+              document.getElementById("liLogin").className = "nav-link active"
+              document.getElementById("liRegister").className = "nav-link"
+              this.setState({
+                ...this.state,
+                isLoginPage: true
+              })
+            }}>Login</a>
+          </li>
+          <li className="nav-item">
+            <a id="liRegister" className="nav-link" href="#" onClick={() => {
+              document.getElementById("liRegister").className = "nav-link active"
+              document.getElementById("liLogin").className = "nav-link"
+              this.setState({
+                ...this.state,
+                isLoginPage: false
+              })
+            }}>Register</a>
+          </li>
+        </ul>
+        {this.state.isLoginPage ? 
+          <Login/> : 
+          <Register/>
+        }     
       </div>
+      </div>
+    </div>
+
     )
     }
 }

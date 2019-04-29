@@ -18,7 +18,7 @@
   },
   "scripts": {
     "electron-pack": "electron-builder -c.extraMetadata.main=build/electron.js .",
-    "start": "concurrently \"BROWSER=none react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "concurrently \"BROWSER=none PORT=3000 react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
@@ -26,17 +26,19 @@
   "dependencies": {
     "axios": "^0.18.0",
     "crypto": "^1.0.1",
+    "datatables.net": "^1.10.19",
     "fabric-ca-client": "~1.2.0",
     "fabric-client": "^1.3.0",
     "fs": "0.0.1-security",
     "grpc": "^1.6.0",
+    "jquery": "^3.4.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-redux": "*",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.8",
-    "save-file": "^2.3.1",
-    "react-redux": "*",
-    "redux": "*"
+    "redux": "*",
+    "save-file": "^2.3.1"
   },
   "devDependencies": {
     "concurrently": "^4.1.0",
