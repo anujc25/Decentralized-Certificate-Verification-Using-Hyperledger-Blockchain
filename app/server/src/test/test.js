@@ -9,7 +9,6 @@ var end_time = Date.now()
 fs.createReadStream('data.csv')
     .pipe(csv())
     .on('data', (row) => {
-
         var url = 'http://localhost:3001/university/studentdiploma'
 
         var req = request.post(url, function (err, resp, body) {
@@ -18,6 +17,7 @@ fs.createReadStream('data.csv')
             } else {
                 console.log('URL: ' + body);
                 end_time = Date.now()
+                console.log("File uploaded for: ", row.studentName)
                 console.log('Total time spent = ', end_time - start_time)
             }
         });
@@ -30,8 +30,6 @@ fs.createReadStream('data.csv')
         form.append('department', row.department);
         form.append('studentName', row.studentName);
         form.append('studentEmail', row.studentEmail);
-
-        console.log("File uploaded for: ", row.studentName)
     })
     .on('end', () => {
         console.log('CSV file successfully processed');
